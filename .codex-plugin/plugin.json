@@ -1,9 +1,10 @@
 {
   "name": "markgraf",
-  "description": "Render and play Markgraf diagrams with the native CLI",
+  "description": "Write and play Markgraf films: animated system diagrams where dots carry the story along the edges",
   "author": {
     "name": "Mark Eibes"
   },
   "skills": "./skills/",
-  "version": "0.0.51"
+  "license": "MIT",
+  "version": "0.0.52"
 }

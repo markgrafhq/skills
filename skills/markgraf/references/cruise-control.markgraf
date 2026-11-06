@@ -1,0 +1,262 @@
+seed 1
+
+still question {
+  + intro |You set cruise control to 100 km/h.
+The road starts to climb.
+Cruise control must decide how much gas to give.
+Too little and you crawl up the hill.
+Too much and you shoot past 100.| {shape: exposition}
+}
+
+scene "A car that holds its speed" {
+  - intro
+  + you "You" {shape: user}
+  + cruise "Cruise Control"
+  + you -> cruise
+  you ~> cruise |You set the target to 100 km/h.|
+  + cruise.target = 100
+  + car "Car"
+  + car.speed = 100
+  + cruise -- car
+  cruise <~ car |The car is doing 100 km/h.
+Cruise control has nothing to fix.|
+  + hill |The road climbs.
+The hill pulls the car back.| {shape: exposition}
+  - hill
+  attention car.speed
+  ~ car.speed = 90
+  attention clear
+  cruise <~ car |The car is down to 90 km/h.|
+  + engine "Engine"
+  + cruise -> engine
+  + engine -> car
+  cruise ~> engine |Cruise control asks for more gas.|
+  engine ~> car |The engine pushes the car uphill.|
+  attention car.speed
+  ~ car.speed = 100
+  attention clear
+  cruise <~ car |The car is back at 100 km/h.|
+  + how |It works. But how much gas, and when?
+Look inside cruise control.| {shape: exposition}
+  - how
+  into cruise
+}
+
+inside cruise {
+  scene "Inside: the gap" {
+    + rewind |Back to the moment the hill drops you to 90.
+Cruise control only knows two numbers.| {shape: exposition}
+    - rewind
+    + gap "Gap"
+    + gap.target = 100
+    + gap.speed = 90
+    + gap.gap = 0
+    ~ gap |Gap
+`{{t: ?}}` − `{{s: ?}}` = `{{g: ?}}`|
+    attention gap.target
+    copy gap.target -> gap slot t: Target 100.
+    attention gap.speed
+    copy gap.speed -> gap slot s: Speed 90.
+    ~ gap.g = 10
+    attention gap.gap
+    copy gap slot g -> gap.gap: 10 km/h short.
+    ~ gap |Gap|
+    attention clear
+  }
+
+  still "The gap says how far you are from 100" {}
+
+  scene "Present: push by how far off you are" {
+    + present "Present"
+    + present.adds = 0
+    + gap -> present
+    gap ~> present |You are 10 km/h short.|
+    ~ present |Present
+2 × `{{g: ?}}` = `{{r: ?}}`|
+    attention gap.gap
+    copy gap.gap -> present slot g: Gap 10.
+    ~ present.r = 20
+    attention present.adds
+    copy present slot r -> present.adds: 20% gas.
+    ~ present |Present|
+    + total "Total"
+    + total.gas = 0
+    + present -> total
+    present ~> total |Present asks for 20% gas.|
+    attention total.gas
+    copy present.adds -> total.gas: 20% gas.
+    attention clear
+    + stuck |On this hill the car needs 20% gas
+just to keep its speed.
+So at 90 the car stops slowing down,
+but it never speeds up again.| {shape: exposition}
+    - stuck
+    + why |At 100 the gap is 0, so Present gives 0.
+The hill pulls you back down.
+Present alone settles 10 km/h short.| {shape: exposition}
+    - why
+  }
+
+  still "Present alone gets stuck 10 km/h short" {}
+
+  scene "Past: push by how long you have been off" {
+    + past "Past"
+    + past.sum = 0
+    + past.adds = 0
+    + gap -> past
+    gap ~> past |You are 10 km/h short this second.|
+    ~ past |Past
+`{{s: ?}}` + `{{g: ?}}` = `{{r: ?}}`|
+    attention past.sum
+    copy past.sum -> past slot s: Sum so far 0.
+    attention gap.gap
+    copy gap.gap -> past slot g: Gap 10.
+    ~ past.r = 10
+    attention past.sum
+    copy past slot r -> past.sum: New sum 10.
+    ~ past |Past|
+    attention past.adds
+    copy past.sum -> past.adds: 1% gas per km/h.
+    + past -> total
+    past ~> total |Past asks for 10% gas.|
+    ~ total |Total
+`{{p: ?}}` + `{{i: ?}}` = `{{r: ?}}`|
+    attention present.adds
+    copy present.adds -> total slot p: Present 20.
+    attention past.adds
+    copy past.adds -> total slot i: Past 10.
+    ~ total.r = 30
+    attention total.gas
+    copy total slot r -> total.gas: 30% gas.
+    ~ total |Total|
+    attention clear
+    + climb |30% beats the hill's 20%.
+The car speeds up.
+Each second you are 8, 6, 4, then 2 short.
+Past adds every one of them up.| {shape: exposition}
+    - climb
+    attention gap.speed
+    ~ gap.speed = 100
+    attention gap.gap
+    ~ gap.gap = 0
+    gap ~> present |You are right on 100 now.|
+    attention present.adds
+    ~ present.adds = 0
+    gap ~> past |10, 8, 6, 4 and 2 make 30.|
+    attention past.sum
+    ~ past.sum = 30
+    attention past.adds
+    ~ past.adds = 30
+    past ~> total |Past still asks for 30% gas.|
+    attention total.gas
+    ~ total.gas = 30
+    attention clear
+    + over |You reach 100 with 30% gas.
+The hill only takes 20%.
+You shoot past to 104.| {shape: exposition}
+    - over
+    attention gap.speed
+    ~ gap.speed = 104
+    attention gap.gap
+    ~ gap.gap = -4
+    attention present.adds
+    ~ present.adds = -8
+    attention past.sum
+    ~ past.sum = 26
+    attention past.adds
+    ~ past.adds = 26
+    attention total.gas
+    ~ total.gas = 18
+    attention clear
+    + swing |Now 18% gas, below the hill's 20%.
+You slow, drop under 100, and climb again.
+The car swings back and forth around 100.| {shape: exposition}
+    - swing
+  }
+
+  still "Past reaches 100 but pushes past it" {}
+
+  scene "Trend: ease off when the gap closes fast" {
+    + again |Same climb, back to the second you reach 100.
+A second ago you were 2 km/h short.| {shape: exposition}
+    - again
+    attention gap.speed
+    ~ gap.speed = 100
+    attention gap.gap
+    ~ gap.gap = 0
+    attention present.adds
+    ~ present.adds = 0
+    attention past.sum
+    ~ past.sum = 30
+    attention past.adds
+    ~ past.adds = 30
+    attention clear
+    + trend "Trend"
+    + trend.last = 2
+    + trend.change = 0
+    + trend.adds = 0
+    + gap -> trend
+    gap ~> trend |The gap is 0 now.|
+    ~ trend |Trend
+`{{n: ?}}` − `{{l: ?}}` = `{{c: ?}}`|
+    attention gap.gap
+    copy gap.gap -> trend slot n: Gap now 0.
+    attention trend.last
+    copy trend.last -> trend slot l: Gap before 2.
+    ~ trend.c = -2
+    attention trend.change
+    copy trend slot c -> trend.change: Closing by 2.
+    ~ trend |Trend
+5 × `{{c: ?}}` = `{{r: ?}}`|
+    copy trend.change -> trend slot c: Change −2.
+    ~ trend.r = -10
+    attention trend.adds
+    copy trend slot r -> trend.adds: 10% less gas.
+    ~ trend |Trend|
+    attention clear
+    + brake |The gap is shrinking fast.
+Trend takes gas away before you arrive.| {shape: exposition}
+    - brake
+  }
+
+  still "Trend sees the arrival coming" {}
+
+  scene "All three make one number" {
+    + trend -> total
+    trend ~> total |Trend asks for 10% less gas.|
+    ~ total |Total
+`{{p: ?}}` + `{{i: ?}}` + `{{d: ?}}` = `{{r: ?}}`|
+    attention present.adds
+    copy present.adds -> total slot p: Present 0.
+    attention past.adds
+    copy past.adds -> total slot i: Past 30.
+    attention trend.adds
+    copy trend.adds -> total slot d: Trend −10.
+    ~ total.r = 20
+    attention total.gas
+    copy total slot r -> total.gas: 20% gas.
+    ~ total |Total|
+    attention clear
+    + match |20% is exactly what the hill takes.
+You stop at 100 instead of shooting past.| {shape: exposition}
+    - match
+  }
+}
+
+still "Present, Past and Trend add up to one gas setting" {}
+
+scene "Back on the road" {
+  out
+  + engine.gas = 0
+  cruise ~> engine |Cruise control sends 20% gas.|
+  attention engine.gas
+  ~ engine.gas = 20
+  attention clear
+  engine ~> car |20% gas holds the car on the hill.|
+  cruise <~ car |The car stays at 100 km/h.|
+  + names |Engineers call this a PID controller.
+P, Present: how far off you are now.
+I, Past: how long you have been off.
+D, Trend: how fast the gap is changing.| {shape: exposition}
+  - names
+}

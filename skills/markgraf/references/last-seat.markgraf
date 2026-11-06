@@ -1,0 +1,102 @@
+seed 1
+
+still question {
+  + intro |You have waited a year for this band.
+On Friday they play a tiny club.
+The club sells seats on its website.
+Only one is left: seat 14.
+Ben wants it too.
+You both click Buy at the same time.| {shape: exposition}
+}
+
+scene "Two buyers, one seat" {
+  - intro
+
+  par {
+    + you "You" {shape: user}
+    + ben "Ben" {shape: user}
+  }
+  + tickets "Tickets"
+  par {
+    + you -> tickets
+    + ben -> tickets
+  }
+
+  par {
+    you ~> tickets |You click Buy.
+Ben clicks at the same instant.|
+    ben ~> tickets
+  }
+
+  par {
+    + seats "Seats"
+    + seats.seat14 = "free"
+  }
+  + tickets -> seats
+
+  tickets ~> seats |Both requests ask: is 14 free?|
+
+  tickets <~ seats |Both hear yes. Seat 14 is free.|
+}
+
+still "Both requests were told: free" {}
+
+scene "The second sale erases the first" {
+  tickets ~> seats |Sell seat 14 to you.|
+
+  ~ seats.seat14 = "you"
+
+  tickets ~> seats |Sell seat 14 to Ben.
+Nobody checks again.|
+
+  ~ seats.seat14 = "Ben"
+
+  attention seats.seat14
+
+  you <~ tickets |Seat 14 is yours!|
+
+  ben <~ tickets |Seat 14 is yours, Ben!|
+
+  attention clear
+}
+
+still "Two tickets sold. One seat. It says Ben." {}
+
+scene "With a check, the seat sells once" {
+  ~ seats.seat14 = "free"
+
+  + free "Still free?" {shape: diamond}
+  ~ tickets -> seats => tickets -> free
+  + free -> seats: Yes
+
+  par {
+    you ~> tickets |Same race. You click Buy.
+Ben clicks at the same instant.|
+    ben ~> tickets
+  }
+
+  tickets ~> free |Each asks: sell 14, if still free.|
+
+  free ~> seats |Seats takes them one at a time.
+Yours is first, and 14 is free.
+Checking and selling are one step.|
+
+  ~ seats.seat14 = "you"
+
+  + waitlist "Waitlist"
+  + free -> waitlist: No
+
+  free ~> waitlist |Ben's turn. Seat 14 is gone.
+He joins the waitlist instead.|
+
+  attention seats.seat14
+
+  you <~ tickets |Seat 14 is yours.|
+
+  ben <~ tickets |Sold out, Ben.
+You are first on the waitlist.|
+
+  attention clear
+}
+
+still "Two clicks. One seat. One honest answer." {}

@@ -1,6 +1,6 @@
 {
   "name": "@markgrafhq/markgraf-agents",
-  "version": "0.0.51",
+  "version": "0.0.52",
   "description": "Native Markgraf CLI skills and inline integrations for coding agents",
   "type": "module",
   "main": "./index.js",
@@ -44,10 +44,10 @@
   ],
   "license": "MIT",
   "author": "Mark Eibes <mark.eibes@gmail.com>",
-  "homepage": "https://github.com/markgrafhq/markgraf-agent-integrations#readme",
-  "bugs": "https://github.com/markgrafhq/markgraf-agent-integrations/issues",
+  "homepage": "https://github.com/markgrafhq/skills#readme",
+  "bugs": "https://github.com/markgrafhq/skills/issues",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/markgrafhq/markgraf-agent-integrations.git"
+    "url": "git+https://github.com/markgrafhq/skills.git"
   }
 }

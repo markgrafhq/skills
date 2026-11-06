@@ -1,0 +1,219 @@
+seed 1
+
+still question {
+  + intro |You run the bank's nightly report.
+It adds up every account. It must say $1,000.
+Meanwhile Maya moves $100 from checking to savings.
+Can your report catch her transfer half done?| {shape: exposition}
+}
+
+scene "One copy of each row" {
+  - intro
+  + you "You" {shape: user}
+  + office "Back Office"
+  + you -> office
+  you ~> office |You start the nightly report.|
+
+  + db "Database"
+  + db.checking = {}
+  ~ db.checking key 11 = 500
+  + db.savings = {}
+  ~ db.savings key 11 = 500
+  + maya "Maya" {shape: user}
+  + maya -> db
+  maya ~> db |Take $100 out of checking.|
+  ~ db.checking key 11 = 400
+
+  ~ office |Back Office
+`{{c: ?}}` + `{{s: ?}}` = `{{t: ?}}`|
+  + office -> db
+  office ~> db |Read checking.|
+  office <~ db |Checking holds $400.|
+  ~ office.c = 400
+  office ~> db |Read savings.|
+  office <~ db |Savings holds $500.|
+  ~ office.s = 500
+  ~ office.t = 900
+  + office.total = 0
+  attention office.total
+  copy office slot t -> office.total: The report says $900.
+  attention clear
+  ~ office |Back Office|
+
+  maya ~> db |Put $100 into savings.|
+  ~ db.savings key 11 = 600
+  you <~ office |Your report says $900.
+The bank holds $1,000.|
+
+  + gone |$100 is missing from your report.
+You read checking after Maya took money out,
+and savings before she put it back in.| {shape: exposition}
+  - gone
+}
+
+still "One copy per row: your report saw half a transfer" {}
+
+scene "Every write is a new version" {
+  + back |Back to the start, with one change.
+Every transaction gets a number when it starts.
+A write never overwrites: it adds a version
+stamped with its transaction's number.
+The $500s are version 11.| {shape: exposition}
+  - back
+
+  ~ db.checking key 11 = 500
+  ~ db.savings key 11 = 500
+  + db.log = {}
+  ~ db.log key 11 = "committed"
+  ~ office.total = 0
+
+  you ~> office |You start the nightly report.|
+  office ~> db |Start transaction 17.|
+  ~ db.log key 17 = "running"
+  office <~ db |The last commit was transaction 11.
+Your snapshot: up to transaction 11.|
+  + office.snapshot = 11
+
+  maya ~> db |Maya starts transaction 18.
+Take $100 out of checking.
+Version 18 holds $400.|
+  ~ db.log key 18 = "running"
+  ~ db.checking key 18 = 400
+
+  ~ office |Back Office
+`{{c: ?}}` + `{{s: ?}}` = `{{t: ?}}`|
+  office ~> db |Read checking.|
+  attention office.snapshot
+  office <~ db |Version 18 is newer than your snapshot.
+Version 11 shows checking at $500.|
+  attention clear
+  ~ office.c = 500
+
+  maya ~> db |Put $100 into savings.
+Version 18 holds $600.|
+  ~ db.savings key 18 = 600
+  maya ~> db |Commit transaction 18.|
+  ~ db.log key 18 = "committed"
+
+  office ~> db |Read savings.|
+  attention office.snapshot
+  office <~ db |Version 18 is newer than your snapshot.
+It committed after you started.
+Version 11 shows savings at $500.|
+  attention clear
+  ~ office.s = 500
+  ~ office.t = 1000
+  attention office.total
+  copy office slot t -> office.total: The report says $1,000.
+  attention clear
+  ~ office |Back Office|
+  office ~> db |Commit transaction 17.|
+  ~ db.log key 17 = "committed"
+  you <~ office |Your report says $1,000.|
+
+  + whole |Maya committed before you read savings.
+You still saw the bank as it was when you started.
+A report started now would see her version 18.| {shape: exposition}
+  - whole
+}
+
+still "Versions: each transaction reads its own snapshot" {}
+
+scene "Two writers, one row" {
+  + fee |Next you charge a $20 fee on checking.
+At the same moment Maya takes $100 out of it.| {shape: exposition}
+  - fee
+
+  you ~> office |Charge a $20 fee on checking.|
+  office ~> db |Start transaction 21.|
+  ~ db.log key 21 = "running"
+  attention office.snapshot
+  office <~ db |The last commit was transaction 18.
+Your snapshot: up to transaction 18.|
+  ~ office.snapshot = 18
+  attention clear
+  office ~> db |Read checking.|
+  office <~ db |Newest version you can see: $400.|
+  office ~> db |Take $20 off the $400.
+Version 21 holds $380.|
+  ~ db.checking key 21 = 380
+
+  maya ~> db |Maya starts transaction 22.
+Her snapshot shows $400 too.
+Take $100 off the $400.
+Version 22 holds $300.|
+  ~ db.log key 22 = "running"
+  ~ db.checking key 22 = 300
+  maya ~> db |Commit transaction 22.|
+  ~ db.log key 22 = "committed"
+
+  office ~> db |Commit transaction 21.|
+  into db
+  out
+  ~ db.checking key 21 = "thrown away"
+  ~ db.log key 21 = "rejected"
+  office <~ db |Rejected: Maya committed first.|
+  you <~ office |Your fee did not go through.|
+
+  you ~> office |Try the fee again.|
+  office ~> db |Start transaction 23.|
+  ~ db.log key 23 = "running"
+  attention office.snapshot
+  office <~ db |The last commit was transaction 22.
+Your snapshot: up to transaction 22.|
+  ~ office.snapshot = 22
+  attention clear
+  office ~> db |Read checking.|
+  office <~ db |Newest version you can see: $300.|
+  office ~> db |Take $20 off the $300.
+Version 23 holds $280.|
+  ~ db.checking key 23 = 280
+  office ~> db |Commit transaction 23.|
+  into db
+  out
+  ~ db.log key 23 = "committed"
+
+  + kept |$400 - $100 - $20 = $280.
+Maya's withdrawal and your fee both count.
+The first to commit wins; the other one retries.| {shape: exposition}
+  - kept
+}
+
+still "First committer wins; the other retries" {}
+
+inside db {
+  scene "Inside the database: the commit check" {
+    + session "Your Session"
+    + session.snapshot = 18
+    + check "Newer Version?" {shape: diamond}
+    + session -> check
+    session ~> check |Commit transaction 21.
+Your snapshot goes up to 18.|
+    + row "Storage"
+    + row.newest = 22
+    + row -- check
+    check <~ row |Checking's newest committed version: 22.|
+    attention session.snapshot
+    + check -> session: Yes
+    check ~> session |22 is newer than your snapshot.
+Your $380 would erase Maya's $100.
+Maya committed first, so she wins.
+Transaction 21 is rejected.|
+    attention clear
+  }
+}
+
+inside db {
+  scene "Inside again: the retry" {
+    attention session.snapshot
+    ~ session.snapshot = 22
+    attention clear
+    session ~> check |Commit transaction 23.
+Your snapshot now goes up to 22.|
+    check <~ row |Checking's newest version is still 22.|
+    + log "Commit Log"
+    + check -> log: No
+    check ~> log |Nothing newer than your snapshot.
+Transaction 23 commits.|
+  }
+}

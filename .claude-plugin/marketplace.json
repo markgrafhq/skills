@@ -1,12 +1,14 @@
 {
   "name": "markgraf",
-  "owner": { "name": "markgrafhq" },
-  "description": "Native Markgraf rendering and playback skills for coding agents.",
+  "owner": {
+    "name": "markgrafhq"
+  },
+  "description": "Markgraf skills for coding agents: write animated system diagrams and play them in the terminal.",
   "plugins": [
     {
       "name": "markgraf",
       "source": "./",
-      "description": "Render and play Markgraf diagrams with the native CLI"
+      "description": "Write and play Markgraf films: animated system diagrams where dots carry the story along the edges"
     }
   ]
 }

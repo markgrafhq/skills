@@ -1,4 +1,48 @@
-# Markgraf agent integrations
+# Markgraf skills
+
+Skills that teach coding agents to write [Markgraf](https://markgrafhq.github.io/)
+films: animated system diagrams where dots carry the story along the edges, one
+sentence at a time, and the camera dives into boxes to show how they work.
+
+## Install
+
+A plugin updates itself. [skills.sh](https://skills.sh) copies editable files
+into your project, and you update them by hand. Pick one per agent.
+
+**Claude Code**
+
+```sh
+claude plugin marketplace add markgrafhq/skills
+claude plugin install markgraf@markgraf
+```
+
+**Codex**
+
+```sh
+codex plugin marketplace add markgrafhq/skills
+codex plugin add markgraf@markgraf
+```
+
+**Any agent, via skills.sh**
+
+```sh
+bunx skills add markgrafhq/skills
+```
+
+The plugins also bring the matching `markgraf` CLI for Apple-silicon Macs. A
+skills.sh install uses `markgraf` on your `PATH`; get it with
+`brew install --cask markgrafhq/tap/markgraf`.
+
+## Skills
+
+| Skill | What it does |
+|---|---|
+| `markgraf` | Writes films that explain a system, protocol or concept: the story, the diagram, the text on the dots, values and calculations. Ships with reference films and checks every draft with `markgraf --check`. |
+| `markgraf-terminal` | Validates, renders and plays `.markgraf` files through the CLI, including high-frame-rate playback in Kitty and Ghostty. |
+| `markgraf-only` | Opt-in mode that answers in Markgraf. Say "Markgraf-only mode", or "Markgraf above 320 characters" for long answers only; "normal answers" turns it off. |
+
+Ask for a film the way you'd ask a colleague: "Explain how a hash map handles
+collisions as a Markgraf film."
 
 ## Inline playback in omp
 
@@ -8,11 +52,11 @@ terminal layout, keeping the conversation above the player. It does not open
 a split, window, or fullscreen terminal player.
 
 Install the prebuilt package from the public
-[`markgrafhq/markgraf-agent-integrations`](https://github.com/markgrafhq/markgraf-agent-integrations)
+[`markgrafhq/skills`](https://github.com/markgrafhq/skills)
 repository, then restart omp:
 
 ```sh
-omp install github:markgrafhq/markgraf-agent-integrations
+omp install github:markgrafhq/skills
 ```
 
 The package includes its matching native renderer and complete app. No Markgraf
@@ -87,7 +131,7 @@ installing this package does not upgrade your OpenCode executable.
 Install with the OpenCode 2 installer, then restart OpenCode:
 
 ```sh
-opencode plugin add github:markgrafhq/markgraf-agent-integrations
+opencode plugin add github:markgrafhq/skills
 ```
 
 Alternatively, merge this entry into `plugins` in your OpenCode 2
@@ -95,7 +139,7 @@ Alternatively, merge this entry into `plugins` in your OpenCode 2
 
 ```json
 {
-  "plugins": ["github:markgrafhq/markgraf-agent-integrations"]
+  "plugins": ["github:markgrafhq/skills"]
 }
 ```
 
@@ -130,86 +174,3 @@ The complete app's third-party notices are included under
 `native/Markgraf Editor.app/Contents/Resources/licenses/`.
 The bundled FFmpeg/x264 [corresponding source archive](https://github.com/i-am-the-slime/purescript-native-encoding/releases/download/v0.0.2/ffmpeg-corresponding-source-v0.0.2.tar.gz)
 contains the matching sources, build recipe, and license notices.
-
-## AI skill for native terminal rendering
-
-The portable `markgraf-terminal` skill teaches an agent to validate, render,
-and play `.markgraf` files through the CLI. It needs no patched coding agent,
-custom renderer plugin, HTTP bridge, or MCP server.
-
-Install it for your coding agent with:
-
-```sh
-npx skills add markgrafhq/markgraf-agent-integrations --skill markgraf-terminal
-```
-
-### Markgraf-only answers
-
-Install the opt-in response-mode skill:
-
-```sh
-npx skills add markgrafhq/markgraf-agent-integrations --skill markgraf-only
-```
-
-Say **“Markgraf-only mode”** or **“answer only in Markgraf”** for every answer to
-use Markgraf. Alternatively, say **“Markgraf above 320 characters”**: replies up
-to and including 320 characters stay ordinary text; longer replies use
-Markgraf, even when they are only exposition. The count includes spaces and
-line breaks in the complete intended answer, before DSL or visual wrapping.
-The agent must not split a long answer into short messages to evade the rule.
-
-The latest requested mode applies to the conversation. Say **“Markgraf-only
-off”** or **“normal answers”** to stop either mode. Installing the skill does
-not activate it. Later explicit format requests and higher-priority
-instructions still take precedence.
-
-Markgraf answers have no surrounding prose recap. Direct replies can be text
-cards; explanations can use actual topology and animation. If inline playback
-is unavailable, the answer is a single `.markgraf` source fence, with
-limitations expressed inside it—not a claim that playback succeeded. Native
-permission dialogs remain native.
-Questions carrying a playback timestamp are anchored to that selected moment.
-
-### Standard agent plugin installations
-
-The same repository also exposes both skills as a standard Claude Code plugin:
-
-```sh
-claude plugin marketplace add markgrafhq/markgraf-agent-integrations
-claude plugin install markgraf@markgraf
-```
-
-Codex's standard plugin installer can use its marketplace:
-
-```sh
-codex plugin marketplace add markgrafhq/markgraf-agent-integrations
-codex plugin add markgraf@markgraf
-```
-
-These are skill installations, not additions to Claude's or Codex's terminal UI.
-Existing omp and OpenCode inline players remain available separately.
-
-The CLI is the rendering interface:
-
-```sh
-markgraf animation.markgraf --check
-markgraf animation.markgraf --terminal-graphics --fps 120
-```
-
-When installed as a plugin, the package includes the matching CLI at
-`native/Markgraf Editor.app/Contents/MacOS/markgraf`; leave it beside its sibling
-executables. A standalone skill installation can instead use `markgraf` on `PATH`.
-The distributed native app requires Apple Silicon macOS.
-
-Graphics playback runs in the foreground of the current terminal and restores
-its previous screen on exit. It requires Kitty graphics support, such as local
-Kitty or Ghostty. Space pauses/resumes, arrows step, and `q` or Escape exits.
-The target is 120 fps, not a throughput guarantee. Backgrounds are transparent;
-`--background` opts into theme paper and `--theme light|dark` selects the palette.
-`--play` opens the native editor and is not the terminal graphics command.
-
-**A skill cannot add graphics passthrough to an agent's shell tool.** The CLI must
-receive terminal protocol replies; allocating a PTY alone is not sufficient.
-If an agent captures or strips those bytes, the skill reports the limitation
-and gives the command to run directly in your terminal. It does not open a split,
-browser, or replacement host, or claim that an exported file was played inline.

@@ -1,0 +1,121 @@
+seed 1
+
+still question {
+  + intro |You buy a coffee on the L train.
+The train dives into a tunnel.
+Your payment just keeps loading.
+You tap Pay again.
+Will you pay for two coffees?| {shape: exposition}
+}
+
+scene "Without an ID, a retry looks new" {
+  - intro
+
+  + you "You" {shape: user}
+  + orders "Orders"
+  + you -> orders
+
+  you ~> orders |You tap Pay. One oat latte, $4.50.|
+
+  par {
+    + bank "Bank"
+    + bank.charges = "none"
+  }
+  + orders -> bank
+
+  orders ~> bank |Orders asks your bank for $4.50.|
+
+  ~ bank.charges = "$4.50"
+
+  orders <~ bank |The bank says yes.|
+
+  + nowhere "Nowhere" {shape: cloud}
+  + nowhere -- orders
+
+  nowhere <~ orders |Orders sends the receipt to you.
+It vanishes in the tunnel.|
+}
+
+still "You were charged, but never told" {}
+
+scene "The second tap is a second coffee" {
+  you ~> orders |You never saw a receipt.
+Out of the tunnel, you tap again.|
+
+  orders ~> bank |Orders can't tell this is a retry.
+To Orders, it is a brand-new coffee.|
+
+  ~ bank.charges = "$4.50, $4.50"
+
+  attention bank.charges
+
+  you <~ orders |You hold a receipt for one coffee.
+Your bank shows two.|
+
+  attention clear
+}
+
+still "Two taps. Two charges. One coffee." {}
+
+scene "With an ID, the café can tell" {
+  ~ bank.charges = "none"
+
+  + seen "Seen ID?" {shape: diamond}
+  ~ orders -> bank => orders -> seen
+  + seen -> bank: No
+
+  you ~> orders |Same coffee, same tunnel.
+This time your phone adds an ID, k7.
+Every retry will reuse that ID.|
+
+  orders ~> seen |Before anything else, Orders asks:
+have I seen ID k7 before?|
+
+  seen ~> bank |It hasn't.
+Your bank takes $4.50.|
+
+  ~ bank.charges = "$4.50"
+
+  par {
+    + ledger "Ledger"
+    + ledger.ids = "nothing yet"
+  }
+  + bank -> ledger
+
+  bank ~> ledger |The receipt is filed under k7.|
+
+  ~ ledger.ids = "k7 → receipt #1"
+
+  nowhere <~ orders |The receipt is lost again.|
+}
+
+still "Charged once, and the reply is lost again" {}
+
+scene "The second tap is recognised" {
+  you ~> orders |Out of the tunnel, you tap again.
+Your phone sends the same ID, k7.|
+
+  orders ~> seen |Orders asks the same question.|
+
+  + seen -> ledger: Yes
+
+  attention ledger.ids
+
+  seen ~> ledger |This time the answer is yes.
+Nobody touches your bank.|
+
+  attention clear
+
+  + orders -- ledger
+
+  orders <~ ledger |The ledger hands back receipt #1.|
+
+  attention bank.charges
+
+  you <~ orders |One coffee. One charge of $4.50.
+The tunnel never cost you a cent.|
+
+  attention clear
+}
+
+still "Two taps. One coffee. One charge." {}
