@@ -2865,6 +2865,79 @@ var takeFallback = (v) => (v1) => {
   return v1;
 };
 var take2 = /* @__PURE__ */ _take(takeFallback);
+// output-es/Promise.Internal/foreign.js
+var newImpl2 = function(k) {
+  return new Promise(k);
+};
+function thenOrCatch(k, c, p) {
+  return p.then(k, c);
+}
+function resolve(a) {
+  return Promise.resolve(a);
+}
+// output-es/Promise.Rejection/foreign.js
+function fromError(a) {
+  return a;
+}
+function _toError(just, nothing, ref) {
+  if (ref instanceof Error) {
+    return just(ref);
+  }
+  return nothing;
+}
+// output-es/Promise.Aff/index.js
+var toAff$p = (customCoerce) => (p) => makeAff((cb) => () => {
+  thenOrCatch(($0) => {
+    const $1 = cb($Either("Right", $0));
+    const a$p = $1();
+    return resolve(a$p);
+  }, ($0) => {
+    const $1 = cb($Either("Left", customCoerce($0)));
+    const a$p = $1();
+    return resolve(a$p);
+  }, p);
+  return nonCanceler;
+});
+var fromAff = () => (aff) => () => newImpl2((onResolve, onReject) => {
+  const $0 = runEffectFn1(onResolve);
+  const $1 = runEffectFn1(onReject);
+  const $2 = runAff((v2) => {
+    if (v2.tag === "Left") {
+      return $1(fromError(v2._1));
+    }
+    if (v2.tag === "Right") {
+      return $0(v2._1);
+    }
+    fail();
+  })(aff);
+  $2();
+});
+var coerce = (rej) => {
+  const $0 = _toError(Just, Nothing, rej);
+  const $1 = unsafeReadTagged(monadIdentity)("String")(rej);
+  const $2 = (() => {
+    const $2 = (() => {
+      if ($1.tag === "Left") {
+        return Nothing;
+      }
+      if ($1.tag === "Right") {
+        return $Maybe("Just", error($1._1));
+      }
+      fail();
+    })();
+    if ($0.tag === "Nothing") {
+      return $2;
+    }
+    return $0;
+  })();
+  if ($2.tag === "Nothing") {
+    return error("Promise failed, couldn't extract JS Error or String");
+  }
+  if ($2.tag === "Just") {
+    return $2._1;
+  }
+  fail();
+};
 // output-es/Yoga.WebProletarian.Runtime/foreign.js
 var monotonicNowMilliseconds = () => globalThis.performance.now();
 // output-es/Markgraf.Animation.Player.Playback/index.js
@@ -2917,7 +2990,7 @@ var unsafeOn = (emitter, eventName, cb) => emitter.on(eventName, cb);
 var $EventHandle = (_1, _2) => ({ tag: "EventHandle", _1, _2 });
 
 // output-es/Data.Options/index.js
-var fromFoldable2 = /* @__PURE__ */ fromFoldable(foldableArray);
+var fromFoldable3 = /* @__PURE__ */ fromFoldable(foldableArray);
 
 // output-es/Node.Process/foreign.js
 import process from "process";
@@ -2959,7 +3032,7 @@ var createInterfaceImpl = (options) => readline.createInterface({
 var closeImpl = (rl) => rl.close();
 // output-es/Node.ReadLine/index.js
 var createInterface = (input) => (opts) => {
-  const $0 = fromFoldable2([...opts, $Tuple("input", input)]);
+  const $0 = fromFoldable3([...opts, $Tuple("input", input)]);
   return () => createInterfaceImpl($0);
 };
 
@@ -3465,7 +3538,7 @@ var normalize = path.normalize;
 function concat3(segments) {
   return path.join.apply(this, segments);
 }
-function resolve(from) {
+function resolve2(from) {
   return (to) => () => path.resolve.apply(this, from.concat([to]));
 }
 var basename = path.basename;
@@ -3478,7 +3551,7 @@ var isAbsolute = path.isAbsolute;
 var $Acknowledgement = (tag, _1) => ({ tag, _1 });
 var $Input = (tag, _1) => ({ tag, _1 });
 var $Pipeline = (tag, _1, _2) => ({ tag, _1, _2 });
-var min2 = (x) => (y) => {
+var min3 = (x) => (y) => {
   const v = ordNumber.compare(x)(y);
   if (v === "LT") {
     return x;
@@ -3531,7 +3604,7 @@ var min1 = (x) => (y) => {
   fail();
 };
 var traverse_2 = /* @__PURE__ */ traverse_(applicativeEffect)(foldableMaybe);
-var identity7 = (x) => x;
+var identity8 = (x) => x;
 var Idle = /* @__PURE__ */ $Pipeline("Idle");
 var Close = /* @__PURE__ */ $Input("Close");
 var TogglePlayback = /* @__PURE__ */ $Input("TogglePlayback");
@@ -3540,9 +3613,9 @@ var PreviousKeyframe = /* @__PURE__ */ $Input("PreviousKeyframe");
 var NextKeyframe = /* @__PURE__ */ $Input("NextKeyframe");
 var PreviousScene = /* @__PURE__ */ $Input("PreviousScene");
 var NextScene = /* @__PURE__ */ $Input("NextScene");
-var Consumed = /* @__PURE__ */ $Acknowledgement("Consumed");
+var Consumed2 = /* @__PURE__ */ $Acknowledgement("Consumed");
 var seconds = /* @__PURE__ */ toStringWith(/* @__PURE__ */ $Format("Fixed", /* @__PURE__ */ clamp(0)(20)(2)));
-var resolve2 = (root) => (cwd) => (options) => _bind((() => {
+var resolve3 = (root) => (cwd) => (options) => _bind((() => {
   const $0 = platformStr === "darwin";
   const $1 = _throwError(error("Native inline playback requires macOS Metal."));
   if (!$0) {
@@ -3560,7 +3633,7 @@ var resolve2 = (root) => (cwd) => (options) => _bind((() => {
       return $0;
     }
     return _pure();
-  })())(() => _bind(_liftEffect(arch2))((architecture) => _bind(architecture.tag === "Arm64" ? _pure() : _throwError(error("Native inline playback requires Apple Silicon macOS.")))(() => _bind(_liftEffect(resolve([
+  })())(() => _bind(_liftEffect(arch2))((architecture) => _bind(architecture.tag === "Arm64" ? _pure() : _throwError(error("Native inline playback requires Apple Silicon macOS.")))(() => _bind(_liftEffect(resolve2([
     cwd
   ])(path)))((absolute) => _pure({
     executable: concat3([root, "native", "Markgraf Editor.app", "Contents", "MacOS", "markgraf"]),
@@ -3606,7 +3679,7 @@ var previousStopAt = (previousStopAt$a0$copy) => (previousStopAt$a1$copy) => (pr
   }
   return previousStopAt$r;
 };
-var playhead = (state) => (now) => min2(state.duration)(max2(0)(state.playing ? state.baseTime + (now - state.epoch) : state.baseTime + 0));
+var playhead = (state) => (now) => min3(state.duration)(max2(0)(state.playing ? state.baseTime + (now - state.epoch) : state.baseTime + 0));
 var nextStopAt = (nextStopAt$a0$copy) => (nextStopAt$a1$copy) => (nextStopAt$a2$copy) => (nextStopAt$a3$copy) => (nextStopAt$a4$copy) => {
   let nextStopAt$a0 = nextStopAt$a0$copy;
   let nextStopAt$a1 = nextStopAt$a1$copy;
@@ -3722,7 +3795,7 @@ var create = (options) => (surface) => {
     const seek = (index, playing) => () => {
       const v = monotonicNowSec();
       const $1 = stateRef;
-      stateRef = { ...$1, baseTime: max2(0)(min2($1.duration)(toNumber(index) / toNumber($1.fps))), epoch: v, playing, revision: $1.revision + 1 | 0 };
+      stateRef = { ...$1, baseTime: max2(0)(min3($1.duration)(toNumber(index) / toNumber($1.fps))), epoch: v, playing, revision: $1.revision + 1 | 0 };
       surface.requestRender();
       return pump();
     };
@@ -3732,7 +3805,7 @@ var create = (options) => (surface) => {
       $1($2)();
       acknowledgementRef = Nothing;
       const $3 = unsubscribeInputRef;
-      traverse_2(identity7)($3)();
+      traverse_2(identity8)($3)();
       unsubscribeInputRef = Nothing;
       const $4 = processRef;
       return traverse_2((v) => v.close)($4)();
@@ -3746,7 +3819,7 @@ var create = (options) => (surface) => {
         traverse_2(clearTimeoutImpl)($3)();
         tickRef = Nothing;
         const $4 = unsubscribePaintRef;
-        traverse_2(identity7)($4)();
+        traverse_2(identity8)($4)();
         unsubscribePaintRef = Nothing;
         surface.releaseImage();
         surface.requestRender();
@@ -3788,7 +3861,7 @@ var create = (options) => (surface) => {
         const reachedEnd = request.revision === state.revision && request.index >= unsafeClamp(ceil(state.duration * toNumber(state.fps)));
         const previous = max2(0)(toNumber(state.shownIndex) / toNumber(state.fps));
         const looping = reachedEnd && state.playing && state.duration > 0;
-        const current = min2(state.duration)(toNumber(request.index) / toNumber(state.fps));
+        const current = min3(state.duration)(toNumber(request.index) / toNumber(state.fps));
         const $4 = stateRef;
         stateRef = {
           ...$4,
@@ -3888,7 +3961,7 @@ var create = (options) => (surface) => {
             sceneFrames: event._1.sceneFrames,
             keyframeFrames: event._1.keyframeFrames,
             epoch: v,
-            baseTime: max2(0)(min2(event._1.duration)(state.baseTime))
+            baseTime: max2(0)(min3(event._1.duration)(state.baseTime))
           };
           surface.requestRender();
           return pump();
@@ -3983,7 +4056,7 @@ var create = (options) => (surface) => {
           }
           const state = stateRef;
           const allowed = surface.observeImage();
-          const time = max2(0)(min2(state.duration)(toNumber(state.shownIndex) / toNumber(state.fps)));
+          const time = max2(0)(min3(state.duration)(toNumber(state.shownIndex) / toNumber(state.fps)));
           return {
             status: basename(options.path) + " · " + (!state.ready ? "Starting native Metal renderer..." : seconds(time) + "/" + seconds(state.duration) + "s · " + (state.playing ? "playing" : "paused")),
             ready: state.ready,
@@ -4066,7 +4139,7 @@ var create = (options) => (surface) => {
         },
         shownMoment: () => {
           const state = stateRef;
-          return state.ready && state.visible && !state.disposed && state.shownIndex >= 0 ? $Maybe("Just", { time: min2(state.duration)(toNumber(state.shownIndex) / toNumber(state.fps)), frame: state.shownIndex, fps: state.fps }) : Nothing;
+          return state.ready && state.visible && !state.disposed && state.shownIndex >= 0 ? $Maybe("Just", { time: min3(state.duration)(toNumber(state.shownIndex) / toNumber(state.fps)), frame: state.shownIndex, fps: state.fps }) : Nothing;
         },
         dispose: cleanup
       };
@@ -4091,80 +4164,6 @@ var pasteToEditor = (context) => (text) => () => {
   ui.pasteToEditor(text);
   return true;
 };
-// output-es/Promise.Internal/foreign.js
-var newImpl2 = function(k) {
-  return new Promise(k);
-};
-function thenOrCatch(k, c, p) {
-  return p.then(k, c);
-}
-function resolve3(a) {
-  return Promise.resolve(a);
-}
-// output-es/Promise.Rejection/foreign.js
-function fromError(a) {
-  return a;
-}
-function _toError(just, nothing, ref) {
-  if (ref instanceof Error) {
-    return just(ref);
-  }
-  return nothing;
-}
-// output-es/Promise.Aff/index.js
-var toAff$p = (customCoerce) => (p) => makeAff((cb) => () => {
-  thenOrCatch(($0) => {
-    const $1 = cb($Either("Right", $0));
-    const a$p = $1();
-    return resolve3(a$p);
-  }, ($0) => {
-    const $1 = cb($Either("Left", customCoerce($0)));
-    const a$p = $1();
-    return resolve3(a$p);
-  }, p);
-  return nonCanceler;
-});
-var fromAff = () => (aff) => () => newImpl2((onResolve, onReject) => {
-  const $0 = runEffectFn1(onResolve);
-  const $1 = runEffectFn1(onReject);
-  const $2 = runAff((v2) => {
-    if (v2.tag === "Left") {
-      return $1(fromError(v2._1));
-    }
-    if (v2.tag === "Right") {
-      return $0(v2._1);
-    }
-    fail();
-  })(aff);
-  $2();
-});
-var coerce = (rej) => {
-  const $0 = _toError(Just, Nothing, rej);
-  const $1 = unsafeReadTagged(monadIdentity)("String")(rej);
-  const $2 = (() => {
-    const $2 = (() => {
-      if ($1.tag === "Left") {
-        return Nothing;
-      }
-      if ($1.tag === "Right") {
-        return $Maybe("Just", error($1._1));
-      }
-      fail();
-    })();
-    if ($0.tag === "Nothing") {
-      return $2;
-    }
-    return $0;
-  })();
-  if ($2.tag === "Nothing") {
-    return error("Promise failed, couldn't extract JS Error or String");
-  }
-  if ($2.tag === "Just") {
-    return $2._1;
-  }
-  fail();
-};
-
 // output-es/Markgraf.Omp/index.js
 var traverse_3 = /* @__PURE__ */ traverse_(applicativeEffect)(foldableMaybe);
 var writeJSON3 = /* @__PURE__ */ writeJSON(/* @__PURE__ */ (() => {
@@ -4189,7 +4188,7 @@ var createPlayer = (request) => (surface) => {
       active: () => true,
       observeImage: observeImage(surface.tui)(image),
       transmit: transmit(surface.tui)(image),
-      onAcknowledgement: (acknowledge) => onAcknowledgement(surface.tui)(image)((x) => acknowledge(x === "OK" ? Consumed : $Acknowledgement("Rejected", "Kitty shared-memory transfer failed: " + x))),
+      onAcknowledgement: (acknowledge) => onAcknowledgement(surface.tui)(image)((x) => acknowledge(x === "OK" ? Consumed2 : $Acknowledgement("Rejected", "Kitty shared-memory transfer failed: " + x))),
       onPaint: onPaint(surface.tui)(image),
       releaseImage: releaseImage(surface.tui)(image),
       requestRender: requestRender(surface.tui),
@@ -4292,7 +4291,7 @@ var play = (root) => (context) => (options) => fromAff()(_bind(_liftEffect(inter
     return _pure();
   }
   fail();
-})())(() => _bind(_liftEffect(cwd(context)))((cwd) => _bind(resolve2(root)(cwd)(options))((request) => _bind(_bind(_liftEffect(mount(context)(createPlayer(request))))(toAff$p(coerce)))((result) => {
+})())(() => _bind(_liftEffect(cwd(context)))((cwd) => _bind(resolve3(root)(cwd)(options))((request) => _bind(_bind(_liftEffect(mount(context)(createPlayer(request))))(toAff$p(coerce)))((result) => {
   if (result.tag === "Left") {
     return _throwError(error(result._1));
   }
