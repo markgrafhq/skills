@@ -27,7 +27,7 @@ function intDiv(x, y) {
 }
 
 // output-es/Type.Proxy/index.js
-var $$$Proxy = () => ({ tag: "Proxy" });
+var $$$Proxy = () => ({});
 var $$Proxy = /* @__PURE__ */ $$$Proxy();
 
 // output-es/Data.Functor/foreign.js
@@ -108,36 +108,36 @@ var showInt = { show: showIntImpl };
 
 // output-es/Data.Ordering/index.js
 var $Ordering = (tag) => tag;
-var LT = /* @__PURE__ */ $Ordering("LT");
-var GT = /* @__PURE__ */ $Ordering("GT");
-var EQ = /* @__PURE__ */ $Ordering("EQ");
+var LT = /* @__PURE__ */ $Ordering(0);
+var GT = /* @__PURE__ */ $Ordering(1);
+var EQ = /* @__PURE__ */ $Ordering(2);
 
 // output-es/Data.Maybe/index.js
 var $Maybe = (tag, _1) => ({ tag, _1 });
-var Nothing = /* @__PURE__ */ $Maybe("Nothing");
-var Just = (value0) => $Maybe("Just", value0);
+var Nothing = /* @__PURE__ */ $Maybe(0);
+var Just = (value0) => $Maybe(1, value0);
 var isNothing = (v2) => {
-  if (v2.tag === "Nothing") {
+  if (v2.tag === 0) {
     return true;
   }
-  if (v2.tag === "Just") {
+  if (v2.tag === 1) {
     return false;
   }
   fail();
 };
 var isJust = (v2) => {
-  if (v2.tag === "Nothing") {
+  if (v2.tag === 0) {
     return false;
   }
-  if (v2.tag === "Just") {
+  if (v2.tag === 1) {
     return true;
   }
   fail();
 };
 var functorMaybe = {
   map: (v) => (v1) => {
-    if (v1.tag === "Just") {
-      return $Maybe("Just", v(v1._1));
+    if (v1.tag === 1) {
+      return $Maybe(1, v(v1._1));
     }
     return Nothing;
   }
@@ -145,8 +145,8 @@ var functorMaybe = {
 
 // output-es/Data.Either/index.js
 var $Either = (tag, _1) => ({ tag, _1 });
-var Left = (value0) => $Either("Left", value0);
-var Right = (value0) => $Either("Right", value0);
+var Left = (value0) => $Either(0, value0);
+var Right = (value0) => $Either(1, value0);
 
 // output-es/Effect/foreign.js
 var pureE = function(a) {
@@ -201,7 +201,7 @@ function catchException(c) {
 // output-es/Control.Monad.Error.Class/index.js
 var $$try = (dictMonadError) => {
   const Monad0 = dictMonadError.MonadThrow0().Monad0();
-  return (a) => dictMonadError.catchError(Monad0.Bind1().Apply0().Functor0().map(Right)(a))((x) => Monad0.Applicative0().pure($Either("Left", x)));
+  return (a) => dictMonadError.catchError(Monad0.Bind1().Apply0().Functor0().map(Right)(a))((x) => Monad0.Applicative0().pure($Either(0, x)));
 };
 
 // output-es/Data.Foldable/foreign.js
@@ -246,19 +246,19 @@ var for_ = (dictApplicative) => {
 };
 var foldableMaybe = {
   foldr: (v) => (v1) => (v2) => {
-    if (v2.tag === "Nothing") {
+    if (v2.tag === 0) {
       return v1;
     }
-    if (v2.tag === "Just") {
+    if (v2.tag === 1) {
       return v(v2._1)(v1);
     }
     fail();
   },
   foldl: (v) => (v1) => (v2) => {
-    if (v2.tag === "Nothing") {
+    if (v2.tag === 0) {
       return v1;
     }
-    if (v2.tag === "Just") {
+    if (v2.tag === 1) {
       return v(v1)(v2._1);
     }
     fail();
@@ -266,10 +266,10 @@ var foldableMaybe = {
   foldMap: (dictMonoid) => {
     const mempty = dictMonoid.mempty;
     return (v) => (v1) => {
-      if (v1.tag === "Nothing") {
+      if (v1.tag === 0) {
         return mempty;
       }
-      if (v1.tag === "Just") {
+      if (v1.tag === 1) {
         return v(v1._1);
       }
       fail();
@@ -286,25 +286,25 @@ var foldableArray = {
 };
 
 // output-es/Data.NonEmpty/index.js
-var $NonEmpty = (_1, _2) => ({ tag: "NonEmpty", _1, _2 });
+var $NonEmpty = (_1, _2) => ({ _1, _2 });
 
 // output-es/Data.Tuple/index.js
-var $Tuple = (_1, _2) => ({ tag: "Tuple", _1, _2 });
+var $Tuple = (_1, _2) => ({ _1, _2 });
 var Tuple = (value0) => (value1) => $Tuple(value0, value1);
 var snd = (v) => v._2;
 var fst = (v) => v._1;
 
 // output-es/Data.List.Types/index.js
 var $List = (tag, _1, _2) => ({ tag, _1, _2 });
-var Nil = /* @__PURE__ */ $List("Nil");
-var Cons = (value0) => (value1) => $List("Cons", value0, value1);
+var Nil = /* @__PURE__ */ $List(0);
+var Cons = (value0) => (value1) => $List(1, value0, value1);
 var listMap = (f) => {
   const chunkedRevMap = (chunkedRevMap$a0$copy) => (chunkedRevMap$a1$copy) => {
     let chunkedRevMap$a0 = chunkedRevMap$a0$copy, chunkedRevMap$a1 = chunkedRevMap$a1$copy, chunkedRevMap$c = true, chunkedRevMap$r;
     while (chunkedRevMap$c) {
       const v = chunkedRevMap$a0, v1 = chunkedRevMap$a1;
-      if (v1.tag === "Cons" && v1._2.tag === "Cons" && v1._2._2.tag === "Cons") {
-        chunkedRevMap$a0 = $List("Cons", v1, v);
+      if (v1.tag === 1 && v1._2.tag === 1 && v1._2._2.tag === 1) {
+        chunkedRevMap$a0 = $List(1, v1, v);
         chunkedRevMap$a1 = v1._2._2._2;
         continue;
       }
@@ -312,9 +312,9 @@ var listMap = (f) => {
         let reverseUnrolledMap$a0 = reverseUnrolledMap$a0$copy, reverseUnrolledMap$a1 = reverseUnrolledMap$a1$copy, reverseUnrolledMap$c = true, reverseUnrolledMap$r;
         while (reverseUnrolledMap$c) {
           const v2 = reverseUnrolledMap$a0, v3 = reverseUnrolledMap$a1;
-          if (v2.tag === "Cons" && v2._1.tag === "Cons" && v2._1._2.tag === "Cons" && v2._1._2._2.tag === "Cons") {
+          if (v2.tag === 1 && v2._1.tag === 1 && v2._1._2.tag === 1 && v2._1._2._2.tag === 1) {
             reverseUnrolledMap$a0 = v2._2;
-            reverseUnrolledMap$a1 = $List("Cons", f(v2._1._1), $List("Cons", f(v2._1._2._1), $List("Cons", f(v2._1._2._2._1), v3)));
+            reverseUnrolledMap$a1 = $List(1, f(v2._1._1), $List(1, f(v2._1._2._1), $List(1, f(v2._1._2._2._1), v3)));
             continue;
           }
           reverseUnrolledMap$c = false;
@@ -324,15 +324,15 @@ var listMap = (f) => {
       };
       chunkedRevMap$c = false;
       chunkedRevMap$r = reverseUnrolledMap(v)((() => {
-        if (v1.tag === "Cons") {
-          if (v1._2.tag === "Cons") {
-            if (v1._2._2.tag === "Nil") {
-              return $List("Cons", f(v1._1), $List("Cons", f(v1._2._1), Nil));
+        if (v1.tag === 1) {
+          if (v1._2.tag === 1) {
+            if (v1._2._2.tag === 0) {
+              return $List(1, f(v1._1), $List(1, f(v1._2._1), Nil));
             }
             return Nil;
           }
-          if (v1._2.tag === "Nil") {
-            return $List("Cons", f(v1._1), Nil);
+          if (v1._2.tag === 0) {
+            return $List(1, f(v1._1), Nil);
           }
         }
         return Nil;
@@ -350,13 +350,13 @@ var foldableList = {
       let go$a0 = go$a0$copy, go$a1 = go$a1$copy, go$c = true, go$r;
       while (go$c) {
         const v = go$a0, v1 = go$a1;
-        if (v1.tag === "Nil") {
+        if (v1.tag === 0) {
           go$c = false;
           go$r = v;
           continue;
         }
-        if (v1.tag === "Cons") {
-          go$a0 = $List("Cons", v1._1, v);
+        if (v1.tag === 1) {
+          go$a0 = $List(1, v1._1, v);
           go$a1 = v1._2;
           continue;
         }
@@ -372,12 +372,12 @@ var foldableList = {
       let go$a0 = go$a0$copy, go$a1 = go$a1$copy, go$c = true, go$r;
       while (go$c) {
         const b = go$a0, v = go$a1;
-        if (v.tag === "Nil") {
+        if (v.tag === 0) {
           go$c = false;
           go$r = b;
           continue;
         }
-        if (v.tag === "Cons") {
+        if (v.tag === 1) {
           go$a0 = f(b)(v._1);
           go$a1 = v._2;
           continue;
@@ -396,24 +396,24 @@ var foldableList = {
     })(mempty);
   }
 };
-var semigroupNonEmptyList = { append: (v) => (as$p) => $NonEmpty(v._1, foldableList.foldr(Cons)($List("Cons", as$p._1, as$p._2))(v._2)) };
+var semigroupNonEmptyList = { append: (v) => (as$p) => $NonEmpty(v._1, foldableList.foldr(Cons)($List(1, as$p._1, as$p._2))(v._2)) };
 var showList = (dictShow) => {
   const show = dictShow.show;
   return {
     show: (v) => {
-      if (v.tag === "Nil") {
+      if (v.tag === 0) {
         return "Nil";
       }
       const go = (go$a0$copy) => (go$a1$copy) => {
         let go$a0 = go$a0$copy, go$a1 = go$a1$copy, go$c = true, go$r;
         while (go$c) {
           const b = go$a0, v$1 = go$a1;
-          if (v$1.tag === "Nil") {
+          if (v$1.tag === 0) {
             go$c = false;
             go$r = b;
             continue;
           }
-          if (v$1.tag === "Cons") {
+          if (v$1.tag === 1) {
             go$a0 = b.init ? { init: false, acc: v$1._1 } : { init: false, acc: b.acc + " : " + v$1._1 };
             go$a1 = v$1._2;
             continue;
@@ -457,7 +457,7 @@ var unfoldr1ArrayImpl = function(isNothing) {
 
 // output-es/Data.Unfoldable1/index.js
 var fromJust = (v) => {
-  if (v.tag === "Just") {
+  if (v.tag === 1) {
     return v._1;
   }
   fail();
@@ -490,7 +490,7 @@ var unfoldrArrayImpl = function(isNothing) {
 
 // output-es/Data.Unfoldable/index.js
 var fromJust2 = (v) => {
-  if (v.tag === "Just") {
+  if (v.tag === 1) {
     return v._1;
   }
   fail();
@@ -502,39 +502,39 @@ var unfoldableArray = {
 
 // output-es/Data.Map.Internal/index.js
 var $$$Map = (tag, _1, _2, _3, _4, _5, _6) => ({ tag, _1, _2, _3, _4, _5, _6 });
-var $SplitLast = (_1, _2, _3) => ({ tag: "SplitLast", _1, _2, _3 });
-var Leaf = /* @__PURE__ */ $$$Map("Leaf");
+var $SplitLast = (_1, _2, _3) => ({ _1, _2, _3 });
+var Leaf = /* @__PURE__ */ $$$Map(0);
 var unsafeNode = (k, v, l, r) => {
-  if (l.tag === "Leaf") {
-    if (r.tag === "Leaf") {
-      return $$$Map("Node", 1, 1, k, v, l, r);
+  if (l.tag === 0) {
+    if (r.tag === 0) {
+      return $$$Map(1, 1, 1, k, v, l, r);
     }
-    if (r.tag === "Node") {
-      return $$$Map("Node", 1 + r._1 | 0, 1 + r._2 | 0, k, v, l, r);
+    if (r.tag === 1) {
+      return $$$Map(1, 1 + r._1 | 0, 1 + r._2 | 0, k, v, l, r);
     }
     fail();
   }
-  if (l.tag === "Node") {
-    if (r.tag === "Leaf") {
-      return $$$Map("Node", 1 + l._1 | 0, 1 + l._2 | 0, k, v, l, r);
+  if (l.tag === 1) {
+    if (r.tag === 0) {
+      return $$$Map(1, 1 + l._1 | 0, 1 + l._2 | 0, k, v, l, r);
     }
-    if (r.tag === "Node") {
-      return $$$Map("Node", l._1 > r._1 ? 1 + l._1 | 0 : 1 + r._1 | 0, (1 + l._2 | 0) + r._2 | 0, k, v, l, r);
+    if (r.tag === 1) {
+      return $$$Map(1, l._1 > r._1 ? 1 + l._1 | 0 : 1 + r._1 | 0, (1 + l._2 | 0) + r._2 | 0, k, v, l, r);
     }
   }
   fail();
 };
 var unsafeBalancedNode = (k, v, l, r) => {
-  if (l.tag === "Leaf") {
-    if (r.tag === "Leaf") {
-      return $$$Map("Node", 1, 1, k, v, Leaf, Leaf);
+  if (l.tag === 0) {
+    if (r.tag === 0) {
+      return $$$Map(1, 1, 1, k, v, Leaf, Leaf);
     }
-    if (r.tag === "Node" && r._1 > 1) {
-      if (r._5.tag === "Node" && (() => {
-        if (r._6.tag === "Leaf") {
+    if (r.tag === 1 && r._1 > 1) {
+      if (r._5.tag === 1 && (() => {
+        if (r._6.tag === 0) {
           return r._5._1 > 0;
         }
-        if (r._6.tag === "Node") {
+        if (r._6.tag === 1) {
           return r._5._1 > r._6._1;
         }
         fail();
@@ -545,14 +545,14 @@ var unsafeBalancedNode = (k, v, l, r) => {
     }
     return unsafeNode(k, v, l, r);
   }
-  if (l.tag === "Node") {
-    if (r.tag === "Node") {
+  if (l.tag === 1) {
+    if (r.tag === 1) {
       if (r._1 > (l._1 + 1 | 0)) {
-        if (r._5.tag === "Node" && (() => {
-          if (r._6.tag === "Leaf") {
+        if (r._5.tag === 1 && (() => {
+          if (r._6.tag === 0) {
             return r._5._1 > 0;
           }
-          if (r._6.tag === "Node") {
+          if (r._6.tag === 1) {
             return r._5._1 > r._6._1;
           }
           fail();
@@ -562,11 +562,11 @@ var unsafeBalancedNode = (k, v, l, r) => {
         return unsafeNode(r._3, r._4, unsafeNode(k, v, l, r._5), r._6);
       }
       if (l._1 > (r._1 + 1 | 0)) {
-        if (l._6.tag === "Node" && (() => {
-          if (l._5.tag === "Leaf") {
+        if (l._6.tag === 1 && (() => {
+          if (l._5.tag === 0) {
             return 0 <= l._6._1;
           }
-          if (l._5.tag === "Node") {
+          if (l._5.tag === 1) {
             return l._5._1 <= l._6._1;
           }
           fail();
@@ -577,12 +577,12 @@ var unsafeBalancedNode = (k, v, l, r) => {
       }
       return unsafeNode(k, v, l, r);
     }
-    if (r.tag === "Leaf" && l._1 > 1) {
-      if (l._6.tag === "Node" && (() => {
-        if (l._5.tag === "Leaf") {
+    if (r.tag === 0 && l._1 > 1) {
+      if (l._6.tag === 1 && (() => {
+        if (l._5.tag === 0) {
           return 0 <= l._6._1;
         }
-        if (l._5.tag === "Node") {
+        if (l._5.tag === 1) {
           return l._5._1 <= l._6._1;
         }
         fail();
@@ -596,20 +596,20 @@ var unsafeBalancedNode = (k, v, l, r) => {
   fail();
 };
 var unsafeSplitLast = (k, v, l, r) => {
-  if (r.tag === "Leaf") {
+  if (r.tag === 0) {
     return $SplitLast(k, v, l);
   }
-  if (r.tag === "Node") {
+  if (r.tag === 1) {
     const v1 = unsafeSplitLast(r._3, r._4, r._5, r._6);
     return $SplitLast(v1._1, v1._2, unsafeBalancedNode(k, v, l, v1._3));
   }
   fail();
 };
 var unsafeJoinNodes = (v, v1) => {
-  if (v.tag === "Leaf") {
+  if (v.tag === 0) {
     return v1;
   }
-  if (v.tag === "Node") {
+  if (v.tag === 1) {
     const v2 = unsafeSplitLast(v._3, v._4, v._5, v._6);
     return unsafeBalancedNode(v2._1, v2._2, v2._3, v1);
   }
@@ -617,19 +617,19 @@ var unsafeJoinNodes = (v, v1) => {
 };
 var insert = (dictOrd) => (k) => (v) => {
   const go = (v1) => {
-    if (v1.tag === "Leaf") {
-      return $$$Map("Node", 1, 1, k, v, Leaf, Leaf);
+    if (v1.tag === 0) {
+      return $$$Map(1, 1, 1, k, v, Leaf, Leaf);
     }
-    if (v1.tag === "Node") {
+    if (v1.tag === 1) {
       const v2 = dictOrd.compare(k)(v1._3);
-      if (v2 === "LT") {
+      if (v2 === 0) {
         return unsafeBalancedNode(v1._3, v1._4, go(v1._5), v1._6);
       }
-      if (v2 === "GT") {
+      if (v2 === 1) {
         return unsafeBalancedNode(v1._3, v1._4, v1._5, go(v1._6));
       }
-      if (v2 === "EQ") {
-        return $$$Map("Node", v1._1, v1._2, k, v, v1._5, v1._6);
+      if (v2 === 2) {
+        return $$$Map(1, v1._1, v1._2, k, v, v1._5, v1._6);
       }
     }
     fail();
@@ -639,10 +639,10 @@ var insert = (dictOrd) => (k) => (v) => {
 var foldableMap = {
   foldr: (f) => (z) => {
     const go = (m$p, z$p) => {
-      if (m$p.tag === "Leaf") {
+      if (m$p.tag === 0) {
         return z$p;
       }
-      if (m$p.tag === "Node") {
+      if (m$p.tag === 1) {
         return go(m$p._5, f(m$p._4)(go(m$p._6, z$p)));
       }
       fail();
@@ -651,10 +651,10 @@ var foldableMap = {
   },
   foldl: (f) => (z) => {
     const go = (z$p, m$p) => {
-      if (m$p.tag === "Leaf") {
+      if (m$p.tag === 0) {
         return z$p;
       }
-      if (m$p.tag === "Node") {
+      if (m$p.tag === 1) {
         return go(f(go(z$p, m$p._5))(m$p._4), m$p._6);
       }
       fail();
@@ -666,10 +666,10 @@ var foldableMap = {
     const $0 = dictMonoid.Semigroup0();
     return (f) => {
       const go = (v) => {
-        if (v.tag === "Leaf") {
+        if (v.tag === 0) {
           return mempty;
         }
-        if (v.tag === "Node") {
+        if (v.tag === 1) {
           return $0.append(go(v._5))($0.append(f(v._4))(go(v._6)));
         }
         fail();
@@ -680,18 +680,18 @@ var foldableMap = {
 };
 var $$delete = (dictOrd) => (k) => {
   const go = (v) => {
-    if (v.tag === "Leaf") {
+    if (v.tag === 0) {
       return Leaf;
     }
-    if (v.tag === "Node") {
+    if (v.tag === 1) {
       const v1 = dictOrd.compare(k)(v._3);
-      if (v1 === "LT") {
+      if (v1 === 0) {
         return unsafeBalancedNode(v._3, v._4, go(v._5), v._6);
       }
-      if (v1 === "GT") {
+      if (v1 === 1) {
         return unsafeBalancedNode(v._3, v._4, v._5, go(v._6));
       }
-      if (v1 === "EQ") {
+      if (v1 === 2) {
         return unsafeJoinNodes(v._5, v._6);
       }
     }
@@ -712,10 +712,10 @@ function notNull(x) {
 var showNullable = (dictShow) => ({
   show: (x) => {
     const $0 = nullable(x, Nothing, Just);
-    if ($0.tag === "Nothing") {
+    if ($0.tag === 0) {
       return "null";
     }
-    if ($0.tag === "Just") {
+    if ($0.tag === 1) {
       return dictShow.show($0._1);
     }
     fail();
@@ -1668,28 +1668,28 @@ var _sequential = Aff.Seq;
 var functorAff = { map: _map };
 var ffiUtil = {
   isLeft: (v) => {
-    if (v.tag === "Left") {
+    if (v.tag === 0) {
       return true;
     }
-    if (v.tag === "Right") {
+    if (v.tag === 1) {
       return false;
     }
     fail();
   },
   fromLeft: (v) => {
-    if (v.tag === "Left") {
+    if (v.tag === 0) {
       return v._1;
     }
-    if (v.tag === "Right") {
+    if (v.tag === 1) {
       return _crashWith("unsafeFromLeft: Right");
     }
     fail();
   },
   fromRight: (v) => {
-    if (v.tag === "Right") {
+    if (v.tag === 1) {
       return v._1;
     }
-    if (v.tag === "Left") {
+    if (v.tag === 0) {
       return _crashWith("unsafeFromRight: Left");
     }
     fail();
@@ -1772,10 +1772,10 @@ var unsafeClamp = (x) => {
     return -2147483648;
   }
   const $0 = fromNumber(x);
-  if ($0.tag === "Nothing") {
+  if ($0.tag === 0) {
     return 0;
   }
-  if ($0.tag === "Just") {
+  if ($0.tag === 1) {
     return $0._1;
   }
   fail();
@@ -1857,10 +1857,10 @@ var monadIdentity = { Applicative0: () => applicativeIdentity, Bind1: () => bind
 // output-es/Control.Monad.Except.Trans/index.js
 var bindExceptT = (dictMonad) => ({
   bind: (v) => (k) => dictMonad.Bind1().bind(v)((v2) => {
-    if (v2.tag === "Left") {
-      return dictMonad.Applicative0().pure($Either("Left", v2._1));
+    if (v2.tag === 0) {
+      return dictMonad.Applicative0().pure($Either(0, v2._1));
     }
-    if (v2.tag === "Right") {
+    if (v2.tag === 1) {
       return k(v2._1);
     }
     fail();
@@ -1871,11 +1871,11 @@ var applyExceptT = (dictMonad) => {
   const $0 = dictMonad.Bind1().Apply0().Functor0();
   const functorExceptT1 = {
     map: (f) => $0.map((m) => {
-      if (m.tag === "Left") {
-        return $Either("Left", m._1);
+      if (m.tag === 0) {
+        return $Either(0, m._1);
       }
-      if (m.tag === "Right") {
-        return $Either("Right", f(m._1));
+      if (m.tag === 1) {
+        return $Either(1, f(m._1));
       }
       fail();
     })
@@ -1888,10 +1888,10 @@ var applyExceptT = (dictMonad) => {
     Functor0: () => functorExceptT1
   };
 };
-var applicativeExceptT = (dictMonad) => ({ pure: (x) => dictMonad.Applicative0().pure($Either("Right", x)), Apply0: () => applyExceptT(dictMonad) });
+var applicativeExceptT = (dictMonad) => ({ pure: (x) => dictMonad.Applicative0().pure($Either(1, x)), Apply0: () => applyExceptT(dictMonad) });
 var monadThrowExceptT = (dictMonad) => {
   const monadExceptT1 = { Applicative0: () => applicativeExceptT(dictMonad), Bind1: () => bindExceptT(dictMonad) };
-  return { throwError: (x) => dictMonad.Applicative0().pure($Either("Left", x)), Monad0: () => monadExceptT1 };
+  return { throwError: (x) => dictMonad.Applicative0().pure($Either(0, x)), Monad0: () => monadExceptT1 };
 };
 
 // output-es/Data.String.Unsafe/foreign.js
@@ -1944,14 +1944,14 @@ var splitAt = function(i) {
 var stripSuffix = (v) => (str) => {
   const v1 = splitAt(length(str) - length(v) | 0)(str);
   if (v1.after === v) {
-    return $Maybe("Just", v1.before);
+    return $Maybe(1, v1.before);
   }
   return Nothing;
 };
 var stripPrefix = (v) => (str) => {
   const v1 = splitAt(length(v))(str);
   if (v1.before === v) {
-    return $Maybe("Just", v1.after);
+    return $Maybe(1, v1.after);
   }
   return Nothing;
 };
@@ -1960,10 +1960,10 @@ var contains = (pat) => {
   const $0 = indexOf(pat);
   return (x) => {
     const $1 = $0(x);
-    if ($1.tag === "Nothing") {
+    if ($1.tag === 0) {
       return false;
     }
-    if ($1.tag === "Just") {
+    if ($1.tag === 1) {
       return true;
     }
     fail();
@@ -1986,20 +1986,20 @@ var isArray = Array.isArray || function(value) {
 
 // output-es/Foreign/index.js
 var $ForeignError = (tag, _1, _2) => ({ tag, _1, _2 });
-var ErrorAtIndex = (value0) => (value1) => $ForeignError("ErrorAtIndex", value0, value1);
-var ErrorAtProperty = (value0) => (value1) => $ForeignError("ErrorAtProperty", value0, value1);
+var ErrorAtIndex = (value0) => (value1) => $ForeignError(2, value0, value1);
+var ErrorAtProperty = (value0) => (value1) => $ForeignError(3, value0, value1);
 var showForeignError = {
   show: (v) => {
-    if (v.tag === "ForeignError") {
+    if (v.tag === 0) {
       return "(ForeignError " + showStringImpl(v._1) + ")";
     }
-    if (v.tag === "ErrorAtIndex") {
+    if (v.tag === 2) {
       return "(ErrorAtIndex " + showIntImpl(v._1) + " " + showForeignError.show(v._2) + ")";
     }
-    if (v.tag === "ErrorAtProperty") {
+    if (v.tag === 3) {
       return "(ErrorAtProperty " + showStringImpl(v._1) + " " + showForeignError.show(v._2) + ")";
     }
-    if (v.tag === "TypeMismatch") {
+    if (v.tag === 1) {
       return "(TypeMismatch " + showStringImpl(v._1) + " " + showStringImpl(v._2) + ")";
     }
     fail();
@@ -2011,36 +2011,36 @@ var readNull = (dictMonad) => {
     if (isNull(value)) {
       return $0.pure(Nothing);
     }
-    return $0.pure($Maybe("Just", value));
+    return $0.pure($Maybe(1, value));
   };
 };
 var readArray = (dictMonad) => (value) => {
   if (isArray(value)) {
     return applicativeExceptT(dictMonad).pure(value);
   }
-  return monadThrowExceptT(dictMonad).throwError($NonEmpty($ForeignError("TypeMismatch", "array", tagOf(value)), Nil));
+  return monadThrowExceptT(dictMonad).throwError($NonEmpty($ForeignError(1, "array", tagOf(value)), Nil));
 };
 var unsafeReadTagged = (dictMonad) => (tag) => (value) => {
   if (tagOf(value) === tag) {
     return applicativeExceptT(dictMonad).pure(value);
   }
-  return monadThrowExceptT(dictMonad).throwError($NonEmpty($ForeignError("TypeMismatch", tag, tagOf(value)), Nil));
+  return monadThrowExceptT(dictMonad).throwError($NonEmpty($ForeignError(1, tag, tagOf(value)), Nil));
 };
 var readBoolean = (dictMonad) => unsafeReadTagged(dictMonad)("Boolean");
 var readNumber = (dictMonad) => unsafeReadTagged(dictMonad)("Number");
 var readInt = (dictMonad) => (value) => {
-  const error = $Either("Left", $NonEmpty($ForeignError("TypeMismatch", "Int", tagOf(value)), Nil));
+  const error = $Either(0, $NonEmpty($ForeignError(1, "Int", tagOf(value)), Nil));
   return dictMonad.Bind1().Apply0().Functor0().map((v2) => {
-    if (v2.tag === "Left") {
+    if (v2.tag === 0) {
       return error;
     }
-    if (v2.tag === "Right") {
+    if (v2.tag === 1) {
       const $0 = fromNumber(v2._1);
-      if ($0.tag === "Nothing") {
+      if ($0.tag === 0) {
         return error;
       }
-      if ($0.tag === "Just") {
-        return $Either("Right", $0._1);
+      if ($0.tag === 1) {
+        return $Either(1, $0._1);
       }
     }
     fail();
@@ -2079,11 +2079,11 @@ function _toError(just, nothing, ref) {
 // output-es/Promise.Aff/index.js
 var toAff$p = (customCoerce) => (p) => makeAff((cb) => () => {
   thenOrCatch(($0) => {
-    const $1 = cb($Either("Right", $0));
+    const $1 = cb($Either(1, $0));
     const a$p = $1();
     return resolve(a$p);
   }, ($0) => {
-    const $1 = cb($Either("Left", customCoerce($0)));
+    const $1 = cb($Either(0, customCoerce($0)));
     const a$p = $1();
     return resolve(a$p);
   }, p);
@@ -2093,10 +2093,10 @@ var fromAff = () => (aff) => () => newImpl((onResolve, onReject) => {
   const $0 = runEffectFn1(onResolve);
   const $1 = runEffectFn1(onReject);
   const $2 = runAff((v2) => {
-    if (v2.tag === "Left") {
+    if (v2.tag === 0) {
       return $1(fromError(v2._1));
     }
-    if (v2.tag === "Right") {
+    if (v2.tag === 1) {
       return $0(v2._1);
     }
     fail();
@@ -2108,23 +2108,23 @@ var coerce = (rej) => {
   const $1 = unsafeReadTagged(monadIdentity)("String")(rej);
   const $2 = (() => {
     const $2 = (() => {
-      if ($1.tag === "Left") {
+      if ($1.tag === 0) {
         return Nothing;
       }
-      if ($1.tag === "Right") {
-        return $Maybe("Just", error($1._1));
+      if ($1.tag === 1) {
+        return $Maybe(1, error($1._1));
       }
       fail();
     })();
-    if ($0.tag === "Nothing") {
+    if ($0.tag === 0) {
       return $2;
     }
     return $0;
   })();
-  if ($2.tag === "Nothing") {
+  if ($2.tag === 0) {
     return error("Promise failed, couldn't extract JS Error or String");
   }
-  if ($2.tag === "Just") {
+  if ($2.tag === 1) {
     return $2._1;
   }
   fail();
@@ -2275,19 +2275,19 @@ var traverseArrayImpl = function() {
 // output-es/Data.Traversable/index.js
 var traversableMaybe = {
   traverse: (dictApplicative) => (v) => (v1) => {
-    if (v1.tag === "Nothing") {
+    if (v1.tag === 0) {
       return dictApplicative.pure(Nothing);
     }
-    if (v1.tag === "Just") {
+    if (v1.tag === 1) {
       return dictApplicative.Apply0().Functor0().map(Just)(v(v1._1));
     }
     fail();
   },
   sequence: (dictApplicative) => (v) => {
-    if (v.tag === "Nothing") {
+    if (v.tag === 0) {
       return dictApplicative.pure(Nothing);
     }
-    if (v.tag === "Just") {
+    if (v.tag === 1) {
       return dictApplicative.Apply0().Functor0().map(Just)(v._1);
     }
     fail();
@@ -2444,7 +2444,7 @@ function unsafeReadPropImpl(f, s, key, value) {
 // output-es/Foreign.Index/index.js
 var unsafeReadProp = (dictMonad) => {
   const pure = applicativeExceptT(dictMonad).pure;
-  return (k) => (value) => unsafeReadPropImpl(monadThrowExceptT(dictMonad).throwError($NonEmpty($ForeignError("TypeMismatch", "object", typeOf(value)), Nil)), pure, k, value);
+  return (k) => (value) => unsafeReadPropImpl(monadThrowExceptT(dictMonad).throwError($NonEmpty($ForeignError(1, "object", typeOf(value)), Nil)), pure, k, value);
 };
 
 // output-es/Data.FoldableWithIndex/index.js
@@ -2567,10 +2567,10 @@ var writeForeignFieldsCons = (dictIsSymbol) => (dictWriteForeign) => (dictWriteF
 var writeForeignNullable = (dictWriteForeign) => ({
   writeImpl: (x) => {
     const $0 = nullable(x, Nothing, Just);
-    if ($0.tag === "Nothing") {
+    if ($0.tag === 0) {
       return nullImpl;
     }
-    if ($0.tag === "Just") {
+    if ($0.tag === 1) {
       return dictWriteForeign.writeImpl($0._1);
     }
     fail();
@@ -2579,25 +2579,25 @@ var writeForeignNullable = (dictWriteForeign) => ({
 var sequenceCombining = (dictMonoid) => {
   const mempty = dictMonoid.mempty;
   return (dictFoldable) => (dictApplicative) => dictFoldable.foldl((acc) => (elem) => {
-    if (acc.tag === "Left") {
-      if (elem.tag === "Left") {
-        return $Either("Left", semigroupNonEmptyList.append(acc._1)(elem._1));
+    if (acc.tag === 0) {
+      if (elem.tag === 0) {
+        return $Either(0, semigroupNonEmptyList.append(acc._1)(elem._1));
       }
-      if (elem.tag === "Right") {
-        return $Either("Left", acc._1);
+      if (elem.tag === 1) {
+        return $Either(0, acc._1);
       }
       fail();
     }
-    if (acc.tag === "Right") {
-      if (elem.tag === "Right") {
-        return $Either("Right", dictMonoid.Semigroup0().append(acc._1)(dictApplicative.pure(elem._1)));
+    if (acc.tag === 1) {
+      if (elem.tag === 1) {
+        return $Either(1, dictMonoid.Semigroup0().append(acc._1)(dictApplicative.pure(elem._1)));
       }
-      if (elem.tag === "Left") {
-        return $Either("Left", elem._1);
+      if (elem.tag === 0) {
+        return $Either(0, elem._1);
       }
     }
     fail();
-  })($Either("Right", mempty));
+  })($Either(1, mempty));
 };
 var sequenceCombining1 = /* @__PURE__ */ sequenceCombining(monoidArray)(foldableArray)(applicativeArray);
 var readForeignNullable = (dictReadForeign) => {
@@ -2605,22 +2605,22 @@ var readForeignNullable = (dictReadForeign) => {
   return {
     readImpl: (o) => {
       const $0 = functorNonEmptyList.map((error) => {
-        if (error.tag === "TypeMismatch") {
-          return $ForeignError("TypeMismatch", "Nullable " + error._1, error._2);
+        if (error.tag === 1) {
+          return $ForeignError(1, "Nullable " + error._1, error._2);
         }
         return error;
       });
       const $1 = bindExceptT2.bind(readNull2(o))((x) => {
         const $1 = traversableMaybe.traverse(applicativeExceptT2)(readImpl5)(x);
-        if ($1.tag === "Left") {
-          return $Either("Left", $1._1);
+        if ($1.tag === 0) {
+          return $Either(0, $1._1);
         }
-        if ($1.tag === "Right") {
-          return $Either("Right", (() => {
-            if ($1._1.tag === "Nothing") {
+        if ($1.tag === 1) {
+          return $Either(1, (() => {
+            if ($1._1.tag === 0) {
               return nullImpl;
             }
-            if ($1._1.tag === "Just") {
+            if ($1._1.tag === 1) {
               return notNull($1._1._1);
             }
             fail();
@@ -2628,11 +2628,11 @@ var readForeignNullable = (dictReadForeign) => {
         }
         fail();
       });
-      if ($1.tag === "Right") {
-        return $Either("Right", $1._1);
+      if ($1.tag === 1) {
+        return $Either(1, $1._1);
       }
-      if ($1.tag === "Left") {
-        return $Either("Left", $0($1._1));
+      if ($1.tag === 0) {
+        return $Either(0, $0($1._1));
       }
       fail();
     }
@@ -2641,11 +2641,11 @@ var readForeignNullable = (dictReadForeign) => {
 var readAtIdx = (dictReadForeign) => (i) => (f) => {
   const $0 = functorNonEmptyList.map(ErrorAtIndex(i));
   const $1 = dictReadForeign.readImpl(f);
-  if ($1.tag === "Right") {
-    return $Either("Right", $1._1);
+  if ($1.tag === 1) {
+    return $Either(1, $1._1);
   }
-  if ($1.tag === "Left") {
-    return $Either("Left", $0($1._1));
+  if ($1.tag === 0) {
+    return $Either(0, $0($1._1));
   }
   fail();
 };
@@ -2660,16 +2660,16 @@ var parseJSON = /* @__PURE__ */ (() => {
   return (x) => {
     const $1 = (() => {
       const $1 = $0(x);
-      return catchException((x$1) => () => $Either("Left", x$1))(() => {
+      return catchException((x$1) => () => $Either(0, x$1))(() => {
         const a$p = $1();
-        return $Either("Right", a$p);
+        return $Either(1, a$p);
       });
     })()();
-    if ($1.tag === "Left") {
-      return $Either("Left", $NonEmpty($ForeignError("ForeignError", message($1._1)), Nil));
+    if ($1.tag === 0) {
+      return $Either(0, $NonEmpty($ForeignError(0, message($1._1)), Nil));
     }
-    if ($1.tag === "Right") {
-      return $Either("Right", $1._1);
+    if ($1.tag === 1) {
+      return $Either(1, $1._1);
     }
     fail();
   };
@@ -2681,24 +2681,24 @@ var readForeignFieldsCons = (dictIsSymbol) => (dictReadForeign) => {
       const name = dictIsSymbol.reflectSymbol($$Proxy);
       const $0 = dictReadForeignFields.getFields($$Proxy)(obj);
       const $1 = bindExceptT2.bind(readProp(name)(obj))(readImpl5);
-      if ($1.tag === "Right") {
-        if ($0.tag === "Right") {
-          return $Either("Right", (x) => unsafeInsert(dictIsSymbol.reflectSymbol($$Proxy))($1._1)($0._1(x)));
+      if ($1.tag === 1) {
+        if ($0.tag === 1) {
+          return $Either(1, (x) => unsafeInsert(dictIsSymbol.reflectSymbol($$Proxy))($1._1)($0._1(x)));
         }
-        if ($0.tag === "Left") {
-          return $Either("Left", $0._1);
+        if ($0.tag === 0) {
+          return $Either(0, $0._1);
         }
         fail();
       }
-      if ($1.tag === "Left") {
-        if ($0.tag === "Left") {
-          return $Either("Left", semigroupNonEmptyList.append((() => {
+      if ($1.tag === 0) {
+        if ($0.tag === 0) {
+          return $Either(0, semigroupNonEmptyList.append((() => {
             const $2 = ErrorAtProperty(name);
             return $NonEmpty($2($1._1._1), listMap($2)($1._1._2));
           })())($0._1));
         }
-        if ($0.tag === "Right") {
-          return $Either("Left", (() => {
+        if ($0.tag === 1) {
+          return $Either(0, (() => {
             const $2 = ErrorAtProperty(name);
             return $NonEmpty($2($1._1._1), listMap($2)($1._1._2));
           })());
@@ -2768,10 +2768,10 @@ var emptyObjectSchema = /* @__PURE__ */ (() => writeForeignFieldsCons({ reflectS
 })({ writeImpl: (rec) => ({}) })(writeForeignFieldsCons1)()()())()()().writeImplFields($$Proxy)({ type: "object", properties: {}, additionalProperties: false })({}))();
 var decodeEffect = (dictReadForeign) => (value) => {
   const v = dictReadForeign.readImpl(value);
-  if (v.tag === "Left") {
+  if (v.tag === 0) {
     return throwException(error(show(v._1)));
   }
-  if (v.tag === "Right") {
+  if (v.tag === 1) {
     const $0 = v._1;
     return () => $0;
   }
@@ -2782,11 +2782,11 @@ var decodeEffect1 = /* @__PURE__ */ decodeEffect(/* @__PURE__ */ (() => {
   return {
     readImpl: (o) => {
       const $1 = $0.getFields($$Proxy)(o);
-      if ($1.tag === "Left") {
-        return $Either("Left", $1._1);
+      if ($1.tag === 0) {
+        return $Either(0, $1._1);
       }
-      if ($1.tag === "Right") {
-        return $Either("Right", $1._1({}));
+      if ($1.tag === 1) {
+        return $Either(1, $1._1({}));
       }
       fail();
     }
@@ -2801,10 +2801,10 @@ var listen2 = (client) => (announce) => listen(client)("announce")((payload) => 
 });
 var decode = (dictReadForeign) => (value) => {
   const v = dictReadForeign.readImpl(value);
-  if (v.tag === "Left") {
+  if (v.tag === 0) {
     return _throwError(error(show(v._1)));
   }
-  if (v.tag === "Right") {
+  if (v.tag === 1) {
     return _pure(v._1);
   }
   fail();
@@ -2814,11 +2814,11 @@ var decode1 = /* @__PURE__ */ decode(/* @__PURE__ */ readForeignNullable(/* @__P
   return {
     readImpl: (o) => {
       const $1 = $0.getFields($$Proxy)(o);
-      if ($1.tag === "Left") {
-        return $Either("Left", $1._1);
+      if ($1.tag === 0) {
+        return $Either(0, $1._1);
       }
-      if ($1.tag === "Right") {
-        return $Either("Right", $1._1({}));
+      if ($1.tag === 1) {
+        return $Either(1, $1._1({}));
       }
       fail();
     }
@@ -2850,13 +2850,13 @@ var claimSchema = /* @__PURE__ */ (() => writeForeignFieldsCons({ reflectSymbol:
   additionalProperties: false
 })({}))();
 var call2 = (client) => (method) => (input) => _bind(_sequential(_parAffAlt($$try2(call(client)(method)(input)))((() => {
-  const $0 = $Either("Left", error("OpenCode playback RPC timed out: " + method));
+  const $0 = $Either(0, error("OpenCode playback RPC timed out: " + method));
   return _map((v) => $0)(_delay(Right, 5000));
 })())))((result) => {
-  if (result.tag === "Left") {
+  if (result.tag === 0) {
     return _throwError(result._1);
   }
-  if (result.tag === "Right") {
+  if (result.tag === 1) {
     return _pure(result._1);
   }
   fail();
@@ -2885,8 +2885,8 @@ var contract = /* @__PURE__ */ define({
 
 // output-es/Node.Encoding/index.js
 var $Encoding = (tag) => tag;
-var UTF8 = /* @__PURE__ */ $Encoding("UTF8");
-var Base64 = /* @__PURE__ */ $Encoding("Base64");
+var UTF8 = /* @__PURE__ */ $Encoding(1);
+var Base64 = /* @__PURE__ */ $Encoding(4);
 
 // output-es/Node.OS/foreign.js
 import {
@@ -2915,17 +2915,17 @@ import {
 
 // output-es/Node.OS/index.js
 var $Arch = (tag, _1) => ({ tag, _1 });
-var Arm = /* @__PURE__ */ $Arch("Arm");
-var Arm64 = /* @__PURE__ */ $Arch("Arm64");
-var Ia32 = /* @__PURE__ */ $Arch("Ia32");
-var MIPS = /* @__PURE__ */ $Arch("MIPS");
-var MIPSEL = /* @__PURE__ */ $Arch("MIPSEL");
-var PPC = /* @__PURE__ */ $Arch("PPC");
-var PPC64 = /* @__PURE__ */ $Arch("PPC64");
-var S390 = /* @__PURE__ */ $Arch("S390");
-var S390X = /* @__PURE__ */ $Arch("S390X");
-var X32 = /* @__PURE__ */ $Arch("X32");
-var X64 = /* @__PURE__ */ $Arch("X64");
+var Arm = /* @__PURE__ */ $Arch(0);
+var Arm64 = /* @__PURE__ */ $Arch(1);
+var Ia32 = /* @__PURE__ */ $Arch(2);
+var MIPS = /* @__PURE__ */ $Arch(3);
+var MIPSEL = /* @__PURE__ */ $Arch(4);
+var PPC = /* @__PURE__ */ $Arch(5);
+var PPC64 = /* @__PURE__ */ $Arch(6);
+var S390 = /* @__PURE__ */ $Arch(7);
+var S390X = /* @__PURE__ */ $Arch(8);
+var X32 = /* @__PURE__ */ $Arch(9);
+var X64 = /* @__PURE__ */ $Arch(10);
 var arch2 = () => {
   const a$p = arch();
   if (a$p === "arm") {
@@ -2961,7 +2961,7 @@ var arch2 = () => {
   if (a$p === "x64") {
     return X64;
   }
-  return $Arch("UnknownArch", a$p);
+  return $Arch(11, a$p);
 };
 
 // output-es/Node.Path/foreign.js
@@ -3031,24 +3031,24 @@ var lookup = (k) => {
     let go$a0 = go$a0$copy, go$c = true, go$r;
     while (go$c) {
       const v = go$a0;
-      if (v.tag === "Leaf") {
+      if (v.tag === 0) {
         go$c = false;
         go$r = Nothing;
         continue;
       }
-      if (v.tag === "Node") {
+      if (v.tag === 1) {
         const v1 = ordString.compare(k)(v._3);
-        if (v1 === "LT") {
+        if (v1 === 0) {
           go$a0 = v._5;
           continue;
         }
-        if (v1 === "GT") {
+        if (v1 === 1) {
           go$a0 = v._6;
           continue;
         }
-        if (v1 === "EQ") {
+        if (v1 === 2) {
           go$c = false;
-          go$r = $Maybe("Just", v._4);
+          go$r = $Maybe(1, v._4);
           continue;
         }
       }
@@ -3090,7 +3090,7 @@ var toolInputSchema = /* @__PURE__ */ (() => writeForeignFieldsCons({ reflectSym
 var takeRequest = (state) => (requestId) => modifyImpl((requests) => ({ state: $$delete(ordString)(requestId)(requests), value: lookup(requestId)(requests) }))(state.requests);
 var heartbeatRequest = (state) => (requestId) => (clientId) => _bind(_liftEffect(monotonicNowMilliseconds))((now) => _liftEffect(modifyImpl((requests) => {
   const v = lookup(requestId)(requests);
-  if (v.tag === "Just" && (v._1.owner.tag === "Nothing" ? false : v._1.owner.tag === "Just" && v._1.owner._1 === clientId) && v._1.leaseUntil > now) {
+  if (v.tag === 1 && (v._1.owner.tag === 0 ? false : v._1.owner.tag === 1 && v._1.owner._1 === clientId) && v._1.leaseUntil > now) {
     return { state: insert(ordString)(requestId)({ ...v._1, leaseUntil: now + 5000 })(requests), value: true };
   }
   return { state: requests, value: false };
@@ -3099,15 +3099,15 @@ var failAll = (state) => (reason) => {
   const $0 = modifyImpl((current) => ({ state: Leaf, value: current }))(state.requests);
   return () => {
     const requests = $0();
-    return for_2(requests)((entry) => entry.finish($Maybe("Just", reason)))();
+    return for_2(requests)((entry) => entry.finish($Maybe(1, reason)))();
   };
 };
 var decode2 = (dictReadForeign) => (value) => {
   const v = dictReadForeign.readImpl(value);
-  if (v.tag === "Left") {
+  if (v.tag === 0) {
     return _throwError(error(show2(v._1)));
   }
-  if (v.tag === "Right") {
+  if (v.tag === 1) {
     return _pure(v._1);
   }
   fail();
@@ -3117,11 +3117,11 @@ var decode12 = /* @__PURE__ */ decode2(/* @__PURE__ */ (() => {
   return {
     readImpl: (o) => {
       const $1 = $0.getFields($$Proxy)(o);
-      if ($1.tag === "Left") {
-        return $Either("Left", $1._1);
+      if ($1.tag === 0) {
+        return $Either(0, $1._1);
       }
-      if ($1.tag === "Right") {
-        return $Either("Right", $1._1({}));
+      if ($1.tag === 1) {
+        return $Either(1, $1._1({}));
       }
       fail();
     }
@@ -3132,11 +3132,11 @@ var decode22 = /* @__PURE__ */ decode2(/* @__PURE__ */ (() => {
   return {
     readImpl: (o) => {
       const $1 = $0.getFields($$Proxy)(o);
-      if ($1.tag === "Left") {
-        return $Either("Left", $1._1);
+      if ($1.tag === 0) {
+        return $Either(0, $1._1);
       }
-      if ($1.tag === "Right") {
-        return $Either("Right", $1._1({}));
+      if ($1.tag === 1) {
+        return $Either(1, $1._1({}));
       }
       fail();
     }
@@ -3147,11 +3147,11 @@ var decode3 = /* @__PURE__ */ decode2(/* @__PURE__ */ (() => {
   return {
     readImpl: (o) => {
       const $1 = $0.getFields($$Proxy)(o);
-      if ($1.tag === "Left") {
-        return $Either("Left", $1._1);
+      if ($1.tag === 0) {
+        return $Either(0, $1._1);
       }
-      if ($1.tag === "Right") {
-        return $Either("Right", $1._1({}));
+      if ($1.tag === 1) {
+        return $Either(1, $1._1({}));
       }
       fail();
     }
@@ -3162,11 +3162,11 @@ var decode4 = /* @__PURE__ */ decode2(/* @__PURE__ */ (() => {
   return {
     readImpl: (o) => {
       const $1 = $0.getFields($$Proxy)(o);
-      if ($1.tag === "Left") {
-        return $Either("Left", $1._1);
+      if ($1.tag === 0) {
+        return $Either(0, $1._1);
       }
-      if ($1.tag === "Right") {
-        return $Either("Right", $1._1({}));
+      if ($1.tag === 1) {
+        return $Either(1, $1._1({}));
       }
       fail();
     }
@@ -3174,33 +3174,33 @@ var decode4 = /* @__PURE__ */ decode2(/* @__PURE__ */ (() => {
 })());
 var completeRequest = (state) => (requestId) => (clientId) => (result) => _bind(_liftEffect(monotonicNowMilliseconds))((now) => _bind(_liftEffect(modifyImpl((requests) => {
   const v = lookup(requestId)(requests);
-  if (v.tag === "Just" && (v._1.owner.tag === "Nothing" ? false : v._1.owner.tag === "Just" && v._1.owner._1 === clientId)) {
-    return { state: $$delete(ordString)(requestId)(requests), value: $Maybe("Just", v._1) };
+  if (v.tag === 1 && (v._1.owner.tag === 0 ? false : v._1.owner.tag === 1 && v._1.owner._1 === clientId)) {
+    return { state: $$delete(ordString)(requestId)(requests), value: $Maybe(1, v._1) };
   }
   return { state: requests, value: Nothing };
-})(state.requests)))((entry) => traverse_2((current) => _liftEffect(current.finish(current.leaseUntil <= now ? $Maybe("Just", (() => {
-  if (current.owner.tag === "Nothing") {
+})(state.requests)))((entry) => traverse_2((current) => _liftEffect(current.finish(current.leaseUntil <= now ? $Maybe(1, (() => {
+  if (current.owner.tag === 0) {
     return "No active local Markgraf TUI claimed this request within 5 seconds.";
   }
-  if (current.owner.tag === "Just") {
+  if (current.owner.tag === 1) {
     return "The local Markgraf TUI stopped heartbeating before playback closed.";
   }
   fail();
 })()) : result)))(entry)));
 var claimMatching = (now) => (claimant) => (requests) => {
   const go = (z$p, m$p) => {
-    if (m$p.tag === "Leaf") {
+    if (m$p.tag === 0) {
       return z$p;
     }
-    if (m$p.tag === "Node") {
+    if (m$p.tag === 1) {
       return go((() => {
         const $0 = go(z$p, m$p._5);
-        if ($0.tag === "Just") {
+        if ($0.tag === 1) {
           return $0;
         }
-        if ($0.tag === "Nothing") {
-          if (m$p._4.owner.tag === "Nothing" && m$p._4.leaseUntil > now && m$p._4.request.sessionId === claimant.sessionId) {
-            return $Maybe("Just", m$p._4);
+        if ($0.tag === 0) {
+          if (m$p._4.owner.tag === 0 && m$p._4.leaseUntil > now && m$p._4.request.sessionId === claimant.sessionId) {
+            return $Maybe(1, m$p._4);
           }
           return Nothing;
         }
@@ -3210,14 +3210,14 @@ var claimMatching = (now) => (claimant) => (requests) => {
     fail();
   };
   const v = go(Nothing, requests);
-  if (v.tag === "Nothing") {
+  if (v.tag === 0) {
     return { state: requests, value: Nothing };
   }
-  if (v.tag === "Just") {
+  if (v.tag === 1) {
     const request = { id: v._1.request.id, path: v._1.request.path, background: v._1.request.background };
     return {
-      state: insert(ordString)(request.id)({ ...v._1, owner: $Maybe("Just", claimant.clientId), leaseUntil: now + 5000 })(requests),
-      value: $Maybe("Just", request)
+      state: insert(ordString)(request.id)({ ...v._1, owner: $Maybe(1, claimant.clientId), leaseUntil: now + 5000 })(requests),
+      value: $Maybe(1, request)
     };
   }
   fail();
@@ -3237,10 +3237,10 @@ var handlers = (state) => [
   {
     name: "claim",
     handler: (input) => (v) => fromAff()(_bind(decode12(input))((request) => _bind(claimRequest(state)(request))((claimed) => _pure(write4((() => {
-      if (claimed.tag === "Nothing") {
+      if (claimed.tag === 0) {
         return nullImpl;
       }
-      if (claimed.tag === "Just") {
+      if (claimed.tag === 1) {
         return notNull(claimed._1);
       }
       fail();
@@ -3259,21 +3259,21 @@ var announce = (state) => (sessionId) => _bind(_liftEffect((() => {
   const $0 = state.registration;
   return () => $0.value;
 })()))((registration) => for_22(registration)((current) => _bind($$try3(_bind(_liftEffect(emit(current)("announce")(write32({ sessionId }))))(toAff$p(coerce))))((sent) => {
-  if (sent.tag === "Right") {
+  if (sent.tag === 1) {
     return _pure();
   }
-  if (sent.tag === "Left") {
+  if (sent.tag === 0) {
     return _liftEffect(failAll(state)("Cannot notify the local Markgraf TUI: " + message(sent._1)));
   }
   fail();
 })));
-var cancelRequest = (state) => (requestId) => (sessionId) => (reason) => _bind(_liftEffect(takeRequest(state)(requestId)))((entry) => _bind(traverse_2((current) => _liftEffect(current.finish($Maybe("Just", reason))))(entry))(() => {
+var cancelRequest = (state) => (requestId) => (sessionId) => (reason) => _bind(_liftEffect(takeRequest(state)(requestId)))((entry) => _bind(traverse_2((current) => _liftEffect(current.finish($Maybe(1, reason))))(entry))(() => {
   const $0 = announce(state)(sessionId);
   if ((() => {
-    if (entry.tag === "Nothing") {
+    if (entry.tag === 0) {
       return false;
     }
-    if (entry.tag === "Just") {
+    if (entry.tag === 1) {
       return true;
     }
     fail();
@@ -3287,15 +3287,15 @@ var expire = (state) => _bind(_liftEffect(monotonicNowMilliseconds))((now) => _b
   return () => $0.value;
 })()))((snapshot) => for_3(snapshot)((candidate) => _bind(_liftEffect(modifyImpl((requests) => {
   const v = lookup(candidate.request.id)(requests);
-  if (v.tag === "Just" && v._1.leaseUntil <= now) {
-    return { state: $$delete(ordString)(candidate.request.id)(requests), value: $Maybe("Just", v._1) };
+  if (v.tag === 1 && v._1.leaseUntil <= now) {
+    return { state: $$delete(ordString)(candidate.request.id)(requests), value: $Maybe(1, v._1) };
   }
   return { state: requests, value: Nothing };
-})(state.requests)))((expired) => for_22(expired)((entry) => _bind(_liftEffect(entry.finish($Maybe("Just", (() => {
-  if (entry.owner.tag === "Nothing") {
+})(state.requests)))((expired) => for_22(expired)((entry) => _bind(_liftEffect(entry.finish($Maybe(1, (() => {
+  if (entry.owner.tag === 0) {
     return "No active local Markgraf TUI claimed this request within 5 seconds.";
   }
-  if (entry.owner.tag === "Just") {
+  if (entry.owner.tag === 1) {
     return "The local Markgraf TUI stopped heartbeating before playback closed.";
   }
   fail();
@@ -3305,7 +3305,7 @@ var waitForPlayback = (state) => (execution) => (request) => makeAff((resolve) =
   return () => {
     const closed = $0.value;
     if (closed) {
-      resolve($Either("Left", error("The Markgraf playback server has closed.")))();
+      resolve($Either(0, error("The Markgraf playback server has closed.")))();
       return nonCanceler;
     }
     let finished = false;
@@ -3323,11 +3323,11 @@ var waitForPlayback = (state) => (execution) => (request) => makeAff((resolve) =
           const $2 = removeAbortRef;
           $2();
           return resolve((() => {
-            if (reason.tag === "Nothing") {
-              return $Either("Right", undefined);
+            if (reason.tag === 0) {
+              return $Either(1, undefined);
             }
-            if (reason.tag === "Just") {
-              return $Either("Left", error(reason._1));
+            if (reason.tag === 1) {
+              return $Either(0, error(reason._1));
             }
             fail();
           })())();
@@ -3374,10 +3374,10 @@ var tool = (state) => (context) => ({
       path: absolutePath,
       background: (() => {
         const $0 = nullable(request.background, Nothing, Just);
-        if ($0.tag === "Nothing") {
+        if ($0.tag === 0) {
           return false;
         }
-        if ($0.tag === "Just") {
+        if ($0.tag === 1) {
           return $0._1;
         }
         fail();
@@ -3390,12 +3390,12 @@ var setup = (context) => fromAff()(_bind(_liftEffect(hostname))((hostname) => _b
   const nonce = showIntImpl(firstNonce) + "-" + showIntImpl(secondNonce);
   return _bind(_liftEffect(() => ({ value: Leaf })))((requests) => _bind(_liftEffect(() => ({ value: false })))((closed) => _bind(_liftEffect(() => ({ value: 0 })))((nextId) => _bind(_liftEffect(() => ({ value: Nothing })))((registrationRef) => {
     const state = { requests, closed, nextId, nonce, hostname, registration: registrationRef };
-    return _bind(_bind(_liftEffect(register(context)(contract)(handlers(state))))(toAff$p(coerce)))((registration) => _bind(_liftEffect(() => registrationRef.value = $Maybe("Just", registration)))(() => _bind($$try3(_bind(_liftEffect(registerTool(context)(tool(state)(context))))(toAff$p(coerce))))((toolCleanupResult) => _bind((() => {
-      if (toolCleanupResult.tag === "Left") {
+    return _bind(_bind(_liftEffect(register(context)(contract)(handlers(state))))(toAff$p(coerce)))((registration) => _bind(_liftEffect(() => registrationRef.value = $Maybe(1, registration)))(() => _bind($$try3(_bind(_liftEffect(registerTool(context)(tool(state)(context))))(toAff$p(coerce))))((toolCleanupResult) => _bind((() => {
+      if (toolCleanupResult.tag === 0) {
         const $0 = toolCleanupResult._1;
         return _bind(_map((v) => {})($$try3(_bind(_liftEffect(dispose(registration)))(toAff$p(coerce)))))(() => _throwError($0));
       }
-      if (toolCleanupResult.tag === "Right") {
+      if (toolCleanupResult.tag === 1) {
         return _pure(toolCleanupResult._1);
       }
       fail();
@@ -3412,14 +3412,14 @@ var setup = (context) => fromAff()(_bind(_liftEffect(hostname))((hostname) => _b
         closed.value = true;
         registrationRef.value = Nothing;
         return fromAff()(_bind(_liftEffect(failAll(state)("Markgraf playback server reloaded before playback completed.")))(() => _bind($$try3(_bind(_liftEffect(toolCleanup))(toAff$p(coerce))))((toolResult) => _bind($$try3(_bind(_liftEffect(dispose(registration)))(toAff$p(coerce))))((registrationResult) => {
-          if (toolResult.tag === "Left") {
+          if (toolResult.tag === 0) {
             return _throwError(toolResult._1);
           }
-          if (toolResult.tag === "Right") {
-            if (registrationResult.tag === "Left") {
+          if (toolResult.tag === 1) {
+            if (registrationResult.tag === 0) {
               return _throwError(registrationResult._1);
             }
-            if (registrationResult.tag === "Right") {
+            if (registrationResult.tag === 1) {
               return _pure();
             }
           }

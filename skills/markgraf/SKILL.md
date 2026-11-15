@@ -14,7 +14,7 @@ Before writing, read one film in `references/` that resembles your topic:
 
 | Film | Shows |
 |---|---|
-| `idempotency-key.markgraf` | the failure first, then the fix on the same diagram; a decision diamond; a visible sink for a lost reply |
+| `idempotency-key.markgraf` | the problem first, then the fix on the same diagram; a decision diamond; a visible sink for a lost reply |
 | `last-seat.markgraf` | two people racing for one thing; one dot text at a time |
 | `cruise-control.markgraf` | a concept built up layer by layer; values flying into calculations; a dive into one box |
 | `mvcc.markgraf` | state as tables on its owner; one box visited twice through a dive |
@@ -25,21 +25,26 @@ and fix what it reports instead of working around it.
 ## The story
 
 - **Open with the question, established before specifics.** A narration card
-  first: who, where, why it matters, then the problem. "You set cruise control
+  first: who, where, why it matters, then the problem. "A driver sets cruise control
   to 100. The road starts to climb." Only then details like "seat 14".
-- **The protagonist is "You"**: `+ you "You" {shape: user}`, second person in
-  all text. Other people (a rival) get a name. Never a device standing in for
-  the person. "You" is the person with the goal, even when a machine does the
-  work afterwards.
+- **Write in the third person; do not address the viewer as "You".** Name who
+  or what the story follows by what it is: a driver, a customer, a request, the
+  compiler. A person gets a box with `{shape: user}` and a plain role as its
+  title (`+ driver "Driver" {shape: user}`). Other people get a name. Never let a
+  device stand in for a person who is really involved. When the film is a
+  program explaining itself, the thing that moves is the lead.
 - **Write like a magazine feature, not a spec.** Concrete nouns, numbers and
   consequences. No unexplained metaphors, no insider shorthand ("spins",
   "returns 200"). Say what the person sees or what physically happens.
 - **One word per concept** across text, box titles and fields.
-- **Show the failure first, then the fix on the same diagram.** The fix should
-  be a visible change in the shape: a new box, a decision diamond, a rerouted
-  edge (`~ a -> b => a -> c`).
+- **Show the problem first, then the answer on the same diagram.** The problem
+  can be a failure, a limit, a missing capability, or a question the viewer
+  cannot answer yet. The answer should be a visible change in the shape: a new
+  box, a decision diamond, a rerouted edge (`~ a -> b => a -> c`). Not every
+  film needs a problem; a layer-by-layer build-up or a plain walkthrough is fine
+  without one.
 - **Chapters.** Named scenes, separated by `still "one-line summary" {}` pauses.
-- **Vary the shape.** Not every film is request → failure → fix. A concept can
+- **Vary the shape.** Not every film is request → problem → fix. A concept can
   be built up layer by layer, each layer showing what the previous one could
   not do. A bug can be a detective story with false leads.
 - **Never show something false.** If the text says a reply was lost, do not
@@ -89,9 +94,16 @@ and fix what it reports instead of working around it.
 
 ## Text
 
+- **Dot text is where you explain.** It is on screen only while its dot
+  travels, so it can say a lot without cluttering the diagram. Write complete
+  prose that makes the viewer understand the hop: what is asked, how it is
+  worked out, and what it means. `Does fox's fingerprint, 5, sit in either of
+  its buckets?` teaches; `Is fox taken?` only labels. Never cut a dot down to a
+  terse tag to save words.
 - **Dot text is a carousel.** Each line of a `|...|` label is one slide shown
   on its own while the dot travels. Every line must be a complete sentence that
-  makes sense alone, at most 40 characters. One to four lines per hop.
+  makes sense alone, at most 40 characters. Use as many lines as the
+  explanation needs; two to five is typical.
 - **Text belongs to the dot it rides on.** Never put someone else's message on
   a dot.
 - **Narration card lines are at most 60 characters** (40 reads better).
@@ -163,6 +175,7 @@ Design around these; the checker rejects them:
 
 ```
 seed 1
+format portrait                                                    # optional: a film for a phone held upright
 still question { + intro |Narration card.| {shape: exposition} }   # opening card
 scene "Chapter title" { - intro  ... }                             # animated chapter
 still "Pause summary" {}                                           # pause between chapters
