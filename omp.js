@@ -2467,6 +2467,117 @@ function toCharCode(c) {
 function fromCharCode(c) {
   return String.fromCharCode(c);
 }
+// output-es/Data.String.CodePoints/foreign.js
+var hasArrayFrom = typeof Array.from === "function";
+var hasStringIterator = typeof Symbol !== "undefined" && Symbol != null && typeof Symbol.iterator !== "undefined" && typeof String.prototype[Symbol.iterator] === "function";
+var hasFromCodePoint = typeof String.prototype.fromCodePoint === "function";
+var hasCodePointAt = typeof String.prototype.codePointAt === "function";
+var _unsafeCodePointAt0 = function(fallback) {
+  return hasCodePointAt ? function(str) {
+    return str.codePointAt(0);
+  } : fallback;
+};
+var _singleton = function(fallback) {
+  return hasFromCodePoint ? String.fromCodePoint : fallback;
+};
+var _take = function(fallback) {
+  return function(n) {
+    if (hasStringIterator) {
+      return function(str) {
+        var accum = "";
+        var iter = str[Symbol.iterator]();
+        for (var i = 0;i < n; ++i) {
+          var o = iter.next();
+          if (o.done)
+            return accum;
+          accum += o.value;
+        }
+        return accum;
+      };
+    }
+    return fallback(n);
+  };
+};
+var _toCodePointArray = function(fallback) {
+  return function(unsafeCodePointAt0) {
+    if (hasArrayFrom) {
+      return function(str) {
+        return Array.from(str, unsafeCodePointAt0);
+      };
+    }
+    return fallback;
+  };
+};
+// output-es/Data.String.CodePoints/index.js
+var uncons = (s) => {
+  const v = length2(s);
+  if (v === 0) {
+    return Nothing;
+  }
+  if (v === 1) {
+    return $Maybe(1, { head: toCharCode(charAt(0)(s)), tail: "" });
+  }
+  const cu1 = toCharCode(charAt(1)(s));
+  const cu0 = toCharCode(charAt(0)(s));
+  if (55296 <= cu0 && cu0 <= 56319 && 56320 <= cu1 && cu1 <= 57343) {
+    return $Maybe(1, { head: (((cu0 - 55296 | 0) * 1024 | 0) + (cu1 - 56320 | 0) | 0) + 65536 | 0, tail: drop(2)(s) });
+  }
+  return $Maybe(1, { head: cu0, tail: drop(1)(s) });
+};
+var unconsButWithTuple = (s) => {
+  const $0 = uncons(s);
+  if ($0.tag === 1) {
+    return $Maybe(1, $Tuple($0._1.head, $0._1.tail));
+  }
+  return Nothing;
+};
+var toCodePointArrayFallback = (s) => unfoldableArray.unfoldr(unconsButWithTuple)(s);
+var unsafeCodePointAt0Fallback = (s) => {
+  const cu0 = toCharCode(charAt(0)(s));
+  if (55296 <= cu0 && cu0 <= 56319 && length2(s) > 1) {
+    const cu1 = toCharCode(charAt(1)(s));
+    if (56320 <= cu1 && cu1 <= 57343) {
+      return (((cu0 - 55296 | 0) * 1024 | 0) + (cu1 - 56320 | 0) | 0) + 65536 | 0;
+    }
+  }
+  return cu0;
+};
+var unsafeCodePointAt0 = /* @__PURE__ */ _unsafeCodePointAt0(unsafeCodePointAt0Fallback);
+var toCodePointArray = /* @__PURE__ */ _toCodePointArray(toCodePointArrayFallback)(unsafeCodePointAt0);
+var indexOf2 = (p) => (s) => {
+  const $0 = indexOf(p)(s);
+  if ($0.tag === 1) {
+    return $Maybe(1, toCodePointArray(take($0._1)(s)).length);
+  }
+  return Nothing;
+};
+var fromCharCode2 = (x) => singleton((() => {
+  if (x >= 0 && x <= 65535) {
+    return fromCharCode(x);
+  }
+  if (x < 0) {
+    return "\x00";
+  }
+  return "￿";
+})());
+var singletonFallback = (v) => {
+  if (v <= 65535) {
+    return fromCharCode2(v);
+  }
+  return fromCharCode2(intDiv(v - 65536 | 0, 1024) + 55296 | 0) + fromCharCode2(intMod(v - 65536 | 0)(1024) + 56320 | 0);
+};
+var singleton2 = /* @__PURE__ */ _singleton(singletonFallback);
+var takeFallback = (v) => (v1) => {
+  if (v < 1) {
+    return "";
+  }
+  const v2 = uncons(v1);
+  if (v2.tag === 1) {
+    return singleton2(v2._1.head) + takeFallback(v - 1 | 0)(v2._1.tail);
+  }
+  return v1;
+};
+var take2 = /* @__PURE__ */ _take(takeFallback);
 // output-es/Data.FoldableWithIndex/index.js
 var traverseWithIndex_ = (dictApplicative) => {
   const $0 = dictApplicative.Apply0();
@@ -2753,118 +2864,28 @@ var defaultOptions = { typeTag: "type", valueTag: "value", toConstructorName: (x
 // output-es/Markgraf.Animation.Variables/index.js
 var variableEditOptions = { ...defaultOptions, toConstructorName: /* @__PURE__ */ drop(4) };
 var dictionaryValueOptions = { ...defaultOptions, toConstructorName: /* @__PURE__ */ drop(4) };
-
-// output-es/Data.String.CodePoints/foreign.js
-var hasArrayFrom = typeof Array.from === "function";
-var hasStringIterator = typeof Symbol !== "undefined" && Symbol != null && typeof Symbol.iterator !== "undefined" && typeof String.prototype[Symbol.iterator] === "function";
-var hasFromCodePoint = typeof String.prototype.fromCodePoint === "function";
-var hasCodePointAt = typeof String.prototype.codePointAt === "function";
-var _unsafeCodePointAt0 = function(fallback) {
-  return hasCodePointAt ? function(str) {
-    return str.codePointAt(0);
-  } : fallback;
-};
-var _singleton = function(fallback) {
-  return hasFromCodePoint ? String.fromCodePoint : fallback;
-};
-var _take = function(fallback) {
-  return function(n) {
-    if (hasStringIterator) {
-      return function(str) {
-        var accum = "";
-        var iter = str[Symbol.iterator]();
-        for (var i = 0;i < n; ++i) {
-          var o = iter.next();
-          if (o.done)
-            return accum;
-          accum += o.value;
-        }
-        return accum;
-      };
-    }
-    return fallback(n);
-  };
-};
-var _toCodePointArray = function(fallback) {
-  return function(unsafeCodePointAt0) {
-    if (hasArrayFrom) {
-      return function(str) {
-        return Array.from(str, unsafeCodePointAt0);
-      };
-    }
-    return fallback;
-  };
-};
-// output-es/Data.String.CodePoints/index.js
-var uncons2 = (s) => {
-  const v = length2(s);
-  if (v === 0) {
-    return Nothing;
-  }
-  if (v === 1) {
-    return $Maybe(1, { head: toCharCode(charAt(0)(s)), tail: "" });
-  }
-  const cu1 = toCharCode(charAt(1)(s));
-  const cu0 = toCharCode(charAt(0)(s));
-  if (55296 <= cu0 && cu0 <= 56319 && 56320 <= cu1 && cu1 <= 57343) {
-    return $Maybe(1, { head: (((cu0 - 55296 | 0) * 1024 | 0) + (cu1 - 56320 | 0) | 0) + 65536 | 0, tail: drop(2)(s) });
-  }
-  return $Maybe(1, { head: cu0, tail: drop(1)(s) });
-};
-var unconsButWithTuple = (s) => {
-  const $0 = uncons2(s);
-  if ($0.tag === 1) {
-    return $Maybe(1, $Tuple($0._1.head, $0._1.tail));
-  }
-  return Nothing;
-};
-var toCodePointArrayFallback = (s) => unfoldableArray.unfoldr(unconsButWithTuple)(s);
-var unsafeCodePointAt0Fallback = (s) => {
-  const cu0 = toCharCode(charAt(0)(s));
-  if (55296 <= cu0 && cu0 <= 56319 && length2(s) > 1) {
-    const cu1 = toCharCode(charAt(1)(s));
-    if (56320 <= cu1 && cu1 <= 57343) {
-      return (((cu0 - 55296 | 0) * 1024 | 0) + (cu1 - 56320 | 0) | 0) + 65536 | 0;
-    }
-  }
-  return cu0;
-};
-var unsafeCodePointAt0 = /* @__PURE__ */ _unsafeCodePointAt0(unsafeCodePointAt0Fallback);
-var toCodePointArray = /* @__PURE__ */ _toCodePointArray(toCodePointArrayFallback)(unsafeCodePointAt0);
-var indexOf2 = (p) => (s) => {
-  const $0 = indexOf(p)(s);
-  if ($0.tag === 1) {
-    return $Maybe(1, toCodePointArray(take($0._1)(s)).length);
-  }
-  return Nothing;
-};
-var fromCharCode2 = (x) => singleton((() => {
-  if (x >= 0 && x <= 65535) {
-    return fromCharCode(x);
-  }
-  if (x < 0) {
-    return "\x00";
-  }
-  return "￿";
-})());
-var singletonFallback = (v) => {
-  if (v <= 65535) {
-    return fromCharCode2(v);
-  }
-  return fromCharCode2(intDiv(v - 65536 | 0, 1024) + 55296 | 0) + fromCharCode2(intMod(v - 65536 | 0)(1024) + 56320 | 0);
-};
-var singleton2 = /* @__PURE__ */ _singleton(singletonFallback);
-var takeFallback = (v) => (v1) => {
-  if (v < 1) {
-    return "";
-  }
-  const v2 = uncons2(v1);
-  if (v2.tag === 1) {
-    return singleton2(v2._1.head) + takeFallback(v - 1 | 0)(v2._1.tail);
-  }
-  return v1;
-};
-var take2 = /* @__PURE__ */ _take(takeFallback);
+// output-es/Markgraf.Animation.Style/index.js
+var $Role = (tag) => tag;
+var Accent = /* @__PURE__ */ $Role(0);
+var Info = /* @__PURE__ */ $Role(1);
+var Success = /* @__PURE__ */ $Role(2);
+var Warning = /* @__PURE__ */ $Role(3);
+var Danger = /* @__PURE__ */ $Role(4);
+var Store = /* @__PURE__ */ $Role(5);
+var External = /* @__PURE__ */ $Role(6);
+var Muted = /* @__PURE__ */ $Role(7);
+var Fine = /* @__PURE__ */ $Role(8);
+var roleOptions = [
+  { name: "accent", role: Accent, detail: "The part the story is about" },
+  { name: "info", role: Info, detail: "A neutral, informative part" },
+  { name: "success", role: Success, detail: "The happy path or the fix" },
+  { name: "warning", role: Warning, detail: "A risk or a limit" },
+  { name: "danger", role: Danger, detail: "A failure, a fault or an attacker" },
+  { name: "store", role: Store, detail: "Data at rest" },
+  { name: "external", role: External, detail: "Outside the system" },
+  { name: "muted", role: Muted, detail: "Background detail" }
+];
+var colorRoleOptions = [...roleOptions, { name: "fine", role: Fine, detail: "Fine print (`-# ` lines) inside boxes" }];
 // output-es/Promise.Internal/foreign.js
 var newImpl2 = function(k) {
   return new Promise(k);

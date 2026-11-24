@@ -38,7 +38,7 @@ skills.sh install uses `markgraf` on your `PATH`; get it with
 | Skill | What it does |
 |---|---|
 | `markgraf` | Writes films that explain a system, protocol or concept: the story, the diagram, the text on the dots, values and calculations. Ships with reference films and checks every draft with `markgraf --check`. |
-| `markgraf-terminal` | Validates, renders and plays `.markgraf` files through the CLI, including high-frame-rate playback in Kitty and Ghostty. |
+| `markgraf-terminal` | Validates `.markgraf` files, exports stills, frames, sequence diagrams and MP4 videos, and opens films in the native editor through the CLI. |
 | `markgraf-only` | Opt-in mode that answers in Markgraf. Say "Markgraf-only mode", or "Markgraf above 320 characters" for long answers only; "normal answers" turns it off. |
 
 Ask for a film the way you'd ask a colleague: "Explain how a hash map handles
@@ -60,7 +60,7 @@ omp install github:markgrafhq/skills
 ```
 
 The package includes its matching native renderer and complete app. No Markgraf
-source checkout, PureScript/Rust toolchain, separate CLI installation, or `-e`
+source checkout, PureScript or Go toolchain, separate CLI installation, or `-e`
 argument is required. Installation needs Bun on `PATH`. The default Git branch
 is a development snapshot; pin the Git spec to a commit for reproducible installs.
 

@@ -85,6 +85,11 @@ and fix what it reports instead of working around it.
   into fewer fields (a list or table instead of one field or box per item).
 - **Edge discipline.** One edge per real relationship. Never add an edge only to
   carry a single dot; remove edges the story no longer needs (`- a -> b`).
+- **Colour by meaning, sparingly.** Give a box a role (`{style: danger}` for
+  a fault, `store` for data at rest, `external` for the outside world,
+  `success` for the fix) and the theme paints it right on light and dark
+  paper. Spell colours (`fill`, `line`, `text`) only when the subject has its
+  own, like a brand. Most boxes stay plain; colour marks the few that matter.
 - **Layout steering:** a box with nothing pointing into it sits in the top row.
   To put a box beside another at the top, write its edge from it, undirected if
   no arrow should point back: `+ nowhere -- orders`, dot `nowhere <~ orders`.
@@ -106,6 +111,14 @@ and fix what it reports instead of working around it.
   explanation needs; two to five is typical.
 - **Text belongs to the dot it rides on.** Never put someone else's message on
   a dot.
+- **Inline markup works in every label** — box titles, dot slides and
+  narration cards: `**bold**`, `*italic*` or `_italic_` (only around whole
+  words, so `snake_case` and `2*3*4` stay as written), `` `code` ``,
+  `~~struck~~`. A line that opens with `# ` is a heading (1.5×), `## ` a
+  subheading (1.25×), both bold, `-# ` fine print (0.8×); the marker itself
+  is not shown. A backslash keeps a marker literal: `\*`, `\_`, `\#`. Use a
+  heading for a box's name above a one-line note and fine print for an
+  aside; dot slides stay mostly body text.
 - **Narration card lines are at most 60 characters** (40 reads better).
 - **Narration is not a dot.** If nothing actually flows from A to B, the
   sentence is a narration card, not a hop on an arbitrary edge:
@@ -182,6 +195,13 @@ still "Pause summary" {}                                           # pause betwe
 
 + api "API"                       # box (title in quotes)
 + db "Ledger" {shape: cylinder}   # shapes: rectangle, cylinder, diamond, cloud, user, drum, ellipse, document
++ desk "Fraud desk" {style: danger}      # role the theme colours: accent, info, success, warning, danger, store, external, muted
++ shop "Shop" {fill: oklch(0.96 0.03 60) -> oklch(0.86 0.1 50), line: #b45309, text: #1a1a1a}
+                                  # own colours: fill is a colour or a gradient (optionally `135deg` first); line and text are solid
++ pane "Pane" {fill: #ffffff80, lip: oklch(0.6 0.12 240 / 0.6)}
+                                  # every colour may end in coverage: `#rrggbbaa`, `#rgba`, `oklch(l c h / 0.5)`; a see-through
+                                  # face lets the page show. `lip:` colours the band and stack under the face (a styled box
+                                  # otherwise takes a deeper shade of its own face); a narration card with colours is painted in them
 + api -> db                       # directed edge;  + a -- b  undirected
 + seen -> bank: No                # edge label
 ~ a -> b => a -> c                # reroute an edge
@@ -191,6 +211,17 @@ still "Pause summary" {}                                           # pause betwe
 api ~> db |One sentence per line.
 Another sentence.|                # dot from api to db (needs an edge)
 api <~ db |Reply.|                # dot from db back to api along the same edge
+api ~> db: Blocked. {style: danger}      # one dot wears a role; {color: #E3EA5E} gives it its own colour
+
++ api |# API
+Takes orders
+-# v2, stateless|                 # per line, in any label: `# ` heading, `## ` subheading, `-# ` fine print
+api ~> db |The ledger *appends* it.|     # *italic* or _italic_, **bold**, `code`, ~~struck~~; `\*` `\_` `\#` stay literal
+
+color accent: #E3EA5E             # header line after seed/format: colour a role for the whole film;
+                                  # `accent` is the travelling dot, its chip and trail. The player or
+                                  # CLI (`--role accent=...`) may also set roles; the film's lines win.
+color fine: #8a8a8a               # optional: fine print inside boxes in its own ink (default: the text colour)
 
 par { ... }                       # simultaneous beats
 ```

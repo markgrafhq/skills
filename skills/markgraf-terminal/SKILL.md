@@ -1,9 +1,9 @@
 ---
 name: markgraf-terminal
-description: Plays and renders Markgraf diagrams through the native CLI in Kitty-compatible terminals. Use when asked to play, preview, validate, or export a .markgraf file, including high-frame-rate terminal playback with transparent backgrounds.
+description: Validates, renders and opens Markgraf diagrams through the native CLI. Use when asked to check, preview, play, or export a .markgraf file as a still, frame, sequence diagram, or MP4 video.
 ---
 
-# Markgraf terminal rendering
+# Markgraf CLI rendering
 
 Use the native CLI, not an agent-specific renderer or a patched coding agent.
 
@@ -13,46 +13,49 @@ Use the native CLI, not an agent-specific renderer or a patched coding agent.
 - With a standalone skill installation, use `markgraf` on `PATH`. Check availability with `command -v markgraf` and inspect `markgraf --help` when capabilities are uncertain.
 - Quote executable and input paths. Keep the native executable beside its `ffmpeg` and `markgraf-editor` siblings; do not copy it out of the app.
 - If no CLI is installed, report that prerequisite rather than inventing a renderer or installing software without permission.
-- The distributed native app requires Apple Silicon macOS. Terminal graphics require Metal and the Kitty graphics protocol; Kitty and Ghostty are suitable terminals. Do not claim this graphics mode works in Windows or iTerm2.
+- The distributed native app requires Apple Silicon macOS. Do not claim it runs on Windows or Linux.
 
 The examples below assume the selected executable is available as `markgraf`.
 
-## Play an animation
+## Validate
 
 Validate the actual file before presenting a newly created or changed diagram:
 
 ```sh
 markgraf "animation.markgraf" --check
-markgraf "animation.markgraf" --terminal-graphics --fps 120
 ```
 
-- Use a foreground terminal session that passes graphics requests **and replies** unchanged. A PTY alone does not prove graphics support.
-- This CLI mode uses the current terminal's fullscreen buffer and restores the previous screen on exit. It does not open another terminal or a browser.
-- Space pauses/resumes; Left/Right navigate keyframes; Up/Down navigate named scenes; `[` and `]` step one frame. Navigation pauses and clamps at the beginning or end.
-- `q` or Escape quits. Ctrl-C cancels.
-- The default scheduling target is 120 fps, not a promise of 120 delivered or displayed frames per second. Late frames are skipped rather than queued.
-- Backgrounds are transparent by default. Add `--background` only when paper is requested.
-- Use `--theme light` or `--theme dark` when the desired palette is known. Do not infer a terminal's palette from the OS theme.
-- `--play` opens the native editor: it is **not** the terminal graphics command.
-- Prefer file input. For deliberate stdin input, the CLI also accepts `markgraf - --terminal-graphics < "animation.markgraf"`; keyboard input stays on the controlling terminal.
+- `--check` prints OK or the problem and exits with status 1 on a problem. Add `--color` for colored diagnostics in an interactive terminal.
+- Fix every reported problem and check again before exporting or opening the film.
+- Prefer file input. For deliberate stdin input, the CLI also accepts `markgraf - --check < "animation.markgraf"`.
 
-## When the agent cannot forward terminal graphics
-
-Many agents capture shell output instead of forwarding Kitty graphics and replies. If the CLI reports `terminal did not respond to the Kitty graphics protocol query`, redirected stdout, or another unsupported-terminal error:
-
-1. Report that exact limitation; do not describe the attempt as successful playback.
-2. Give the fully quoted CLI command and file path for the user to run directly in a compatible terminal.
-3. Do not keep retrying through the same captured-output tool, inject bytes into another process's TTY, or steal the agent's keyboard stream.
-4. Do not open a split, window, native editor, or browser as a silent fallback.
-
-A skill supplies invocation instructions; it cannot add an inline image surface to an agent's UI. Offer ANSI `--terminal` playback only when the user accepts that different rendering mode.
-
-## Export when requested
+## Export
 
 ```sh
+markgraf "animation.markgraf" --still '' -o "still.svg"
 markgraf "animation.markgraf" --frame 0 -o "frame.png"
-markgraf "animation.markgraf" --frame 0 -o "frame.svg"
+markgraf "animation.markgraf" --frame 4.5 -o "frame.svg"
+markgraf "sequence.markgraf" --sequence "sequence.png"
 markgraf "animation.markgraf" -o "animation.mp4"
 ```
 
-PNG/SVG exports retain transparency unless `--background` is requested; MP4 is opaque. Do not substitute an export for playback without saying so. Report the generated path and only the behavior actually observed.
+- `--still NAME` renders one named `still` or `title`; `''` selects the first one. `--frame SECONDS` renders the film at that time.
+- The output extension selects the format: `.png`, `.svg`, or `.mp4` (H.264).
+- PNG/SVG exports are transparent outside the diagram unless `--background` is requested; MP4 is opaque.
+- Use `--theme NAME` (`light`, `dark`, `blueprint`, `whiteboard`, or `isometric`) when the desired look is known. Do not infer a palette from the OS theme.
+- `--fps`, `--scale`, `--max-width`, `--max-height`, and `--min-text-px` tune exported output. Video defaults to 60 fps.
+- Exports run headless and do not open a window.
+
+## Open in the editor
+
+```sh
+markgraf "animation.markgraf" --play
+```
+
+- `--play` opens the film in the native Markgraf editor window, which owns playback, scrubbing, sizing, and the system light/dark theme. File input is watched, so later edits to the file appear in the editor.
+- Rendering overrides (`--fps`, `--scale`, `--max-width`, `--max-height`, `--min-text-px`, `--theme`, `--background`) are rejected with `--play`; do not pass them.
+- Open the editor only when the user asks to play or preview the film. Do not open it as a silent fallback for a failed export.
+
+## Report
+
+Report the generated paths and only the behavior actually observed. Do not substitute an export for playback without saying so, and do not describe an exported file as having been played.
